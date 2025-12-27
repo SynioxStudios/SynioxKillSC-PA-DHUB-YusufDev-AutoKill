@@ -1,13 +1,21 @@
+--[[
+    Syniox Kill Hub - YusufDev Special
+    Size: 200x200 | Key: Syniox-X-Yusuf
+    Auto Kill + FPS + Kills + 45s Server Hop
+]]
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RS = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+
 -- Ayarlar
 _G.KillActive = true
 _G.HopInterval = 45
-local lp = game.Players.LocalPlayer
-local rs = game:GetService("ReplicatedStorage")
-local TeleportService = game:GetService("TeleportService")
-local HttpService = game:GetService("HttpService")
-local RunService = game:GetService("RunService")
+local playerWhitelist = {}
 
--- GUI OLUŞTURMA (250x250)
+-- GUI OLUŞTURMA (200x200)
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
@@ -20,103 +28,134 @@ ScreenGui.Parent = game.CoreGui
 MainFrame.Name = "SynioxKillHub"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-MainFrame.Position = UDim2.new(0.5, -125, 0.5, -125)
-MainFrame.Size = UDim2.new(0, 250, 0, 250)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -100)
+MainFrame.Size = UDim2.new(0, 200, 0, 200)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
-UICorner.CornerRadius = UDim.new(0, 15)
+UICorner.CornerRadius = UDim.new(0, 12)
 UICorner.Parent = MainFrame
 
--- Başlık
+-- Başlık: Syniox Kill
 Title.Parent = MainFrame
 Title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Title.Size = UDim2.new(1, 0, 0, 45)
+Title.Size = UDim2.new(1, 0, 0, 35)
 Title.Font = Enum.Font.GothamBold
 Title.Text = "Syniox Kill"
-Title.TextColor3 = Color3.fromRGB(255, 0, 0) -- Kan Kırmızısı
-Title.TextSize = 22
+Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+Title.TextSize = 18
 local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 15)
+TitleCorner.CornerRadius = UDim.new(0, 12)
 TitleCorner.Parent = Title
 
--- İstatistikler
+-- İstatistikler (Daha küçük fontlarla 200x200'e uyum)
 FPSLabel.Parent = MainFrame
-FPSLabel.Position = UDim2.new(0, 0, 0, 55)
-FPSLabel.Size = UDim2.new(1, 0, 0, 30)
+FPSLabel.Position = UDim2.new(0, 0, 0, 45)
+FPSLabel.Size = UDim2.new(1, 0, 0, 25)
 FPSLabel.BackgroundTransparency = 1
 FPSLabel.Font = Enum.Font.Code
 FPSLabel.Text = "FPS: ..."
 FPSLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+FPSLabel.TextSize = 14
 
 KillLabel.Parent = MainFrame
-KillLabel.Position = UDim2.new(0, 0, 0, 85)
-KillLabel.Size = UDim2.new(1, 0, 0, 30)
+KillLabel.Position = UDim2.new(0, 0, 0, 75)
+KillLabel.Size = UDim2.new(1, 0, 0, 25)
 KillLabel.BackgroundTransparency = 1
 KillLabel.Font = Enum.Font.GothamBold
 KillLabel.Text = "Kills: 0"
 KillLabel.TextColor3 = Color3.fromRGB(255, 85, 85)
+KillLabel.TextSize = 16
 
+-- Büyük Zamanlayıcı
 TimerLabel.Parent = MainFrame
-TimerLabel.Position = UDim2.new(0, 0, 0, 160)
-TimerLabel.Size = UDim2.new(1, 0, 0, 50)
+TimerLabel.Position = UDim2.new(0, 0, 0, 130)
+TimerLabel.Size = UDim2.new(1, 0, 0, 40)
 TimerLabel.BackgroundTransparency = 1
 TimerLabel.Font = Enum.Font.GothamBold
 TimerLabel.Text = "Hop: 45s"
 TimerLabel.TextColor3 = Color3.fromRGB(255, 170, 0)
-TimerLabel.TextSize = 28
+TimerLabel.TextSize = 22
 
--- DURMADAN VURMA VE HEDEFLEME SİSTEMİ
-RunService.Stepped:Connect(function()
-    if _G.KillActive then
-        pcall(function()
-            for _, v in pairs(game.Players:GetPlayers()) do
-                if v ~= lp and v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
-                    -- Durmadan vuruş sinyali (Burst miktarını 15'e çıkardım)
-                    for i = 1, 15 do
-                        rs.rEvents.punchEvent:FireServer("punchClick")
+-- KATLİAM DÖNGÜSÜ
+task.spawn(function()
+    while true do
+        if _G.KillActive then
+            pcall(function()
+                local char = LocalPlayer.Character
+                local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
+                
+                if punch and punch.Parent ~= char then punch.Parent = char end
+
+                -- Hızlı Remote Vuruş
+                LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+                LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+
+                -- Alan Hasarı
+                local rHand = char:FindFirstChild("RightHand")
+                local lHand = char:FindFirstChild("LeftHand")
+
+                if rHand and lHand then
+                    for _, target in ipairs(Players:GetPlayers()) do
+                        if target ~= LocalPlayer and not playerWhitelist[target.Name] then
+                            local tChar = target.Character
+                            local tRoot = tChar and tChar:FindFirstChild("HumanoidRootPart")
+                            local tHum = tChar and tChar:FindFirstChild("Humanoid")
+
+                            if tRoot and tHum and tHum.Health > 0 then
+                                firetouchinterest(rHand, tRoot, 1)
+                                firetouchinterest(rHand, tRoot, 0)
+                                firetouchinterest(lHand, tRoot, 1)
+                                firetouchinterest(lHand, tRoot, 0)
+                            end
+                        end
                     end
                 end
-            end
-        end)
+            end)
+        end
+        task.wait(0.01)
     end
 end)
 
--- FPS VE KILL GÜNCELLEME
+-- FPS & KILL UPDATE
 local frameCount = 0
 local lastUpdate = tick()
-RunService.RenderStepped:Connect(function()
+RS.RenderStepped:Connect(function()
     frameCount = frameCount + 1
     if tick() - lastUpdate >= 1 then
         FPSLabel.Text = "FPS: " .. frameCount
         frameCount = 0
         lastUpdate = tick()
-        
-        -- Kill sayısını her saniye kontrol et
-        local kills = lp:FindFirstChild("leaderstats") and lp.leaderstats:FindFirstChild("Kills")
-        if kills then KillLabel.Text = "Kills: " .. kills.Value end
+        local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
+        KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")
     end
 end)
 
--- SERVER HOP (45 Saniye)
-spawn(function()
+-- SERVER HOPPER (Boş Server Garantili)
+local function serverHop()
+    local api = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
+    local s, res = pcall(function() return HttpService:JSONDecode(game:HttpGet(api)) end)
+    if s and res.data then
+        for _, server in pairs(res.data) do
+            if server.playing < (server.maxPlayers - 2) and server.id ~= game.JobId then
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
+                return
+            end
+        end
+    end
+    task.wait(2)
+    serverHop()
+end
+
+-- 45 SN SAYACI
+task.spawn(function()
     local timeLeft = _G.HopInterval
     while timeLeft > 0 do
         TimerLabel.Text = "Hop: " .. timeLeft .. "s"
         task.wait(1)
         timeLeft = timeLeft - 1
     end
-    
-    -- Sunucu Değiştirme İşlemi
-    local api = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
-    local s, res = pcall(function() return HttpService:JSONDecode(game:HttpGet(api)) end)
-    if s then
-        for _, server in pairs(res.data) do
-            if server.playing < server.maxPlayers and server.id ~= game.JobId then
-                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, lp)
-            end
-        end
-    end
+    serverHop()
 end)
 
-print("ARALIKSIZ MOD AKTİF! Key: Syniox-X-Yusuf")
+print("Kompakt Syniox Kill Hub v4.1 Aktif!")
