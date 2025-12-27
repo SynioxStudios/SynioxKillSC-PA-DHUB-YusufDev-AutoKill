@@ -1,8 +1,8 @@
 --[[
-    Syniox Paid Kill - Force-Hop
-    Logic: If TP Fails, Instant Try Next Server
+    Syniox Paid Kill - Ultra Optimized
+    Optimization: Blackout & Asset Nuker by Yusuf
+    Features: FPS Counter, Force-Hop, Spawn-Kill, ByYusuf Signature
     Key: Syniox-X-Yusuf
-    Size: 140x140
 ]]
 
 local Players = game:GetService("Players")
@@ -10,31 +10,87 @@ local LocalPlayer = Players.LocalPlayer
 local RS = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
+local Lighting = game:GetService("Lighting")
 
 _G.KillActive = true
 _G.HopInterval = 45
 
--- GUI (140x140 Nano)
+-----------------------------------------------------------
+-- [ YUSUF'S FULL OPTIMIZATION ENGINE ] --
+-----------------------------------------------------------
+task.spawn(function()
+    -- 1. Gereksiz GUI'leri Temizle (Kendi GUI'miz hariç)
+    local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+    for _, gui in pairs(playerGui:GetChildren()) do
+        if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then
+            gui:Destroy()
+        end
+    end
+
+    -- 2. Efektleri ve Işıkları Sil
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
+            obj:Destroy()
+        end
+    end
+
+    -- 3. Gökyüzünü Karart ve Atmosferi Sıfırla
+    local function darkenSky()
+        for _, v in pairs(Lighting:GetChildren()) do
+            if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") then
+                v:Destroy()
+            end
+        end
+        local darkSky = Instance.new("Sky")
+        darkSky.Name = "DarkSky"
+        darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+        darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+        darkSky.Parent = Lighting
+
+        Lighting.Brightness = 0
+        Lighting.ClockTime = 0
+        Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+        Lighting.Ambient = Color3.new(0, 0, 0)
+        Lighting.FogEnd = 100
+    end
+    darkenSky()
+end)
+
+-----------------------------------------------------------
+-- [ SYNIOX GUI DESIGN ] --
+-----------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "SynioxGui" -- Optimizasyondan silinmemesi için
 local MainFrame = Instance.new("Frame", ScreenGui)
 local Title = Instance.new("TextLabel", MainFrame)
+local FPSLabel = Instance.new("TextLabel", MainFrame)
 local KillLabel = Instance.new("TextLabel", MainFrame)
 local TimerLabel = Instance.new("TextLabel", MainFrame)
+local CreditLabel = Instance.new("TextLabel", MainFrame)
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 MainFrame.Position = UDim2.new(0.5, -70, 0.5, -70)
 MainFrame.Size = UDim2.new(0, 140, 0, 140)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
-Title.Size = UDim2.new(1, 0, 0, 25)
-Title.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+Title.Size = UDim2.new(1, 0, 0, 22)
+Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
 Title.Text = "Syniox Paid Kill"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 10
 Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
+
+FPSLabel.Position = UDim2.new(0, 10, 0, 25)
+FPSLabel.Size = UDim2.new(0, 50, 0, 15)
+FPSLabel.BackgroundTransparency = 1
+FPSLabel.Text = "FPS: 0"
+FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+FPSLabel.Font = Enum.Font.Code
+FPSLabel.TextSize = 9
+FPSLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 KillLabel.Position = UDim2.new(0, 0, 0, 45)
 KillLabel.Size = UDim2.new(1, 0, 0, 30)
@@ -43,14 +99,39 @@ KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
 KillLabel.Font = Enum.Font.GothamBold
 KillLabel.TextSize = 14
 
-TimerLabel.Position = UDim2.new(0, 0, 0, 85)
-TimerLabel.Size = UDim2.new(1, 0, 0, 40)
+TimerLabel.Position = UDim2.new(0, 0, 0, 80)
+TimerLabel.Size = UDim2.new(1, 0, 0, 35)
 TimerLabel.BackgroundTransparency = 1
 TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TimerLabel.Font = Enum.Font.GothamBold
 TimerLabel.TextSize = 20
 
--- KILLER DÖNGÜSÜ
+CreditLabel.Position = UDim2.new(0, 0, 1, -18)
+CreditLabel.Size = UDim2.new(1, -8, 0, 15)
+CreditLabel.BackgroundTransparency = 1
+CreditLabel.Text = "ByYusuf"
+CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+CreditLabel.TextTransparency = 0.5
+CreditLabel.Font = Enum.Font.Code
+CreditLabel.TextSize = 9
+CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
+
+-----------------------------------------------------------
+-- [ KATLİAM MOTORU VE SİSTEMLER ] --
+-----------------------------------------------------------
+local lastUpdate = tick()
+local frameCount = 0
+RS.RenderStepped:Connect(function()
+    frameCount = frameCount + 1
+    if tick() - lastUpdate >= 1 then
+        FPSLabel.Text = "FPS: " .. frameCount
+        frameCount = 0
+        lastUpdate = tick()
+    end
+    local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
+    KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")
+end)
+
 task.spawn(function()
     while _G.KillActive do
         pcall(function()
@@ -77,28 +158,23 @@ task.spawn(function()
     end
 end)
 
--- KESİNTİSİZ SERVER HOPPER
 local function forceHop()
-    TimerLabel.Text = "Sunucu Aranıyor..."
+    TimerLabel.Text = "TP..."
     local success, result = pcall(function()
         return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
     end)
-    
     if success and result then
         for _, server in pairs(result) do
             if server.playing < server.maxPlayers and server.id ~= game.JobId then
-                TimerLabel.Text = "TP Deneniyor..."
-                -- Işınlanma denemesi (Eğer başarısız olursa alttaki task.wait çalışıp bir sonrakini deneyecek)
                 TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
-                task.wait(1.5) -- Eğer 1.5 saniye içinde sunucudan ayrılmazsak hata oluşmuş demektir, sıradakine geç.
+                task.wait(1.5)
             end
         end
     end
     task.wait(1)
-    forceHop() -- Hiçbiri olmazsa tekrar listeyi al
+    forceHop()
 end
 
--- GERİ SAYIM
 task.spawn(function()
     local t = _G.HopInterval
     while t > 0 do
@@ -107,10 +183,4 @@ task.spawn(function()
         t = t - 1
     end
     forceHop()
-end)
-
--- VERİ GÜNCELLEME
-RS.RenderStepped:Connect(function()
-    local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
-    KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")
 end)
