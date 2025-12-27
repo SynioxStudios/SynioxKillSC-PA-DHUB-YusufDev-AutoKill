@@ -1,0 +1,122 @@
+-- Ayarlar
+_G.KillActive = true
+_G.HopInterval = 45
+local lp = game.Players.LocalPlayer
+local rs = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
+
+-- GUI OLUŞTURMA (250x250)
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local FPSLabel = Instance.new("TextLabel")
+local KillLabel = Instance.new("TextLabel")
+local TimerLabel = Instance.new("TextLabel")
+local UICorner = Instance.new("UICorner")
+
+ScreenGui.Parent = game.CoreGui
+MainFrame.Name = "SynioxKillHub"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Position = UDim2.new(0.5, -125, 0.5, -125)
+MainFrame.Size = UDim2.new(0, 250, 0, 250)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UICorner.CornerRadius = UDim.new(0, 15)
+UICorner.Parent = MainFrame
+
+-- Başlık
+Title.Parent = MainFrame
+Title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Title.Size = UDim2.new(1, 0, 0, 45)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "Syniox Kill"
+Title.TextColor3 = Color3.fromRGB(255, 0, 0) -- Kan Kırmızısı
+Title.TextSize = 22
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 15)
+TitleCorner.Parent = Title
+
+-- İstatistikler
+FPSLabel.Parent = MainFrame
+FPSLabel.Position = UDim2.new(0, 0, 0, 55)
+FPSLabel.Size = UDim2.new(1, 0, 0, 30)
+FPSLabel.BackgroundTransparency = 1
+FPSLabel.Font = Enum.Font.Code
+FPSLabel.Text = "FPS: ..."
+FPSLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+KillLabel.Parent = MainFrame
+KillLabel.Position = UDim2.new(0, 0, 0, 85)
+KillLabel.Size = UDim2.new(1, 0, 0, 30)
+KillLabel.BackgroundTransparency = 1
+KillLabel.Font = Enum.Font.GothamBold
+KillLabel.Text = "Kills: 0"
+KillLabel.TextColor3 = Color3.fromRGB(255, 85, 85)
+
+TimerLabel.Parent = MainFrame
+TimerLabel.Position = UDim2.new(0, 0, 0, 160)
+TimerLabel.Size = UDim2.new(1, 0, 0, 50)
+TimerLabel.BackgroundTransparency = 1
+TimerLabel.Font = Enum.Font.GothamBold
+TimerLabel.Text = "Hop: 45s"
+TimerLabel.TextColor3 = Color3.fromRGB(255, 170, 0)
+TimerLabel.TextSize = 28
+
+-- DURMADAN VURMA VE HEDEFLEME SİSTEMİ
+RunService.Stepped:Connect(function()
+    if _G.KillActive then
+        pcall(function()
+            for _, v in pairs(game.Players:GetPlayers()) do
+                if v ~= lp and v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
+                    -- Durmadan vuruş sinyali (Burst miktarını 15'e çıkardım)
+                    for i = 1, 15 do
+                        rs.rEvents.punchEvent:FireServer("punchClick")
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- FPS VE KILL GÜNCELLEME
+local frameCount = 0
+local lastUpdate = tick()
+RunService.RenderStepped:Connect(function()
+    frameCount = frameCount + 1
+    if tick() - lastUpdate >= 1 then
+        FPSLabel.Text = "FPS: " .. frameCount
+        frameCount = 0
+        lastUpdate = tick()
+        
+        -- Kill sayısını her saniye kontrol et
+        local kills = lp:FindFirstChild("leaderstats") and lp.leaderstats:FindFirstChild("Kills")
+        if kills then KillLabel.Text = "Kills: " .. kills.Value end
+    end
+end)
+
+-- SERVER HOP (45 Saniye)
+spawn(function()
+    local timeLeft = _G.HopInterval
+    while timeLeft > 0 do
+        TimerLabel.Text = "Hop: " .. timeLeft .. "s"
+        task.wait(1)
+        timeLeft = timeLeft - 1
+    end
+    
+    -- Sunucu Değiştirme İşlemi
+    local api = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
+    local s, res = pcall(function() return HttpService:JSONDecode(game:HttpGet(api)) end)
+    if s then
+        for _, server in pairs(res.data) do
+            if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, lp)
+            end
+        end
+    end
+end)
+
+print("ARALIKSIZ MOD AKTİF! Key: Syniox-X-Yusuf")
