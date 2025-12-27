@@ -1,6 +1,7 @@
 --[[
-    Syniox Tiny Kill Hub - YusufDev
-    Size: Mini | Key: Syniox-X-Yusuf
+    Syniox Ultra-Fast Global - YusufDev
+    Size: 140x140 | Speed: Max Burst | Range: Infinite
+    Key: Syniox-X-Yusuf
 ]]
 
 local Players = game:GetService("Players")
@@ -12,98 +13,103 @@ local TeleportService = game:GetService("TeleportService")
 _G.KillActive = true
 _G.HopInterval = 45
 
--- GUI OLUŞTURMA (Minimal 160x160)
+-- GUI (140x140)
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 local MainFrame = Instance.new("Frame", ScreenGui)
 local Title = Instance.new("TextLabel", MainFrame)
 local FPSLabel = Instance.new("TextLabel", MainFrame)
 local KillLabel = Instance.new("TextLabel", MainFrame)
 local TimerLabel = Instance.new("TextLabel", MainFrame)
-local UICorner = Instance.new("UICorner", MainFrame)
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
 
-MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-MainFrame.Position = UDim2.new(0.5, -80, 0.5, -80)
-MainFrame.Size = UDim2.new(0, 160, 0, 160) -- Boyutlar küçültüldü
+MainFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+MainFrame.Position = UDim2.new(0.5, -70, 0.5, -70)
+MainFrame.Size = UDim2.new(0, 140, 0, 140)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
-UICorner.CornerRadius = UDim.new(0, 10)
-
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Title.Size = UDim2.new(1, 0, 0, 25)
+Title.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
+Title.Text = "Syniox Ultra-Fast"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "Syniox Kill"
-Title.TextColor3 = Color3.fromRGB(255, 0, 0)
-Title.TextSize = 14
-Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
+Title.TextSize = 10
+Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 8)
 
-FPSLabel.Position = UDim2.new(0, 0, 0, 40)
-FPSLabel.Size = UDim2.new(1, 0, 0, 20)
+FPSLabel.Position = UDim2.new(0, 0, 0, 35)
+FPSLabel.Size = UDim2.new(1, 0, 0, 15)
 FPSLabel.BackgroundTransparency = 1
-FPSLabel.Text = "FPS: ..."
 FPSLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FPSLabel.Font = Enum.Font.Code
-FPSLabel.TextSize = 12
+FPSLabel.TextSize = 10
 
-KillLabel.Position = UDim2.new(0, 0, 0, 65)
+KillLabel.Position = UDim2.new(0, 0, 0, 55)
 KillLabel.Size = UDim2.new(1, 0, 0, 20)
 KillLabel.BackgroundTransparency = 1
-KillLabel.Text = "Kills: 0"
-KillLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+KillLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
 KillLabel.Font = Enum.Font.GothamBold
-KillLabel.TextSize = 14
+KillLabel.TextSize = 12
 
-TimerLabel.Position = UDim2.new(0, 0, 0, 100)
+TimerLabel.Position = UDim2.new(0, 0, 0, 85)
 TimerLabel.Size = UDim2.new(1, 0, 0, 40)
 TimerLabel.BackgroundTransparency = 1
-TimerLabel.Text = "Hop: 45s"
-TimerLabel.TextColor3 = Color3.fromRGB(255, 160, 0)
+TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
 TimerLabel.Font = Enum.Font.GothamBold
-TimerLabel.TextSize = 20
+TimerLabel.TextSize = 18
 
--- KILL & DATA DÖNGÜSÜ
+-- ULTRA HIZLI GLOBAL KILL SİSTEMİ
 task.spawn(function()
-    while true do
-        if _G.KillActive then
-            pcall(function()
-                local char = LocalPlayer.Character
-                local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
-                if punch and punch.Parent ~= char then punch.Parent = char end
+    while _G.KillActive do
+        pcall(function()
+            local char = LocalPlayer.Character
+            local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
+            
+            if punch then
+                if punch.Parent ~= char then punch.Parent = char end
                 
-                LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
-                LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
-
-                for _, v in ipairs(Players:GetPlayers()) do
-                    if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                        local root = v.Character.HumanoidRootPart
-                        local hum = v.Character:FindFirstChild("Humanoid")
-                        if hum and hum.Health > 0 and char:FindFirstChild("RightHand") then
-                            firetouchinterest(char.RightHand, root, 1)
-                            firetouchinterest(char.RightHand, root, 0)
+                -- BURST ATTACK: Her döngüde 10 kat vuruş sinyali gönderir
+                for i = 1, 10 do
+                    LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+                    LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+                end
+                
+                local rHand = char:FindFirstChild("RightHand")
+                if rHand then
+                    for _, target in ipairs(Players:GetPlayers()) do
+                        if target ~= LocalPlayer and target.Character then
+                            local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
+                            local tHum = target.Character:FindFirstChild("Humanoid")
+                            
+                            -- Mesafe sınırı olmadan dokunma sinyali (Saniyede onlarca kez)
+                            if tRoot and tHum and tHum.Health > 0 then
+                                firetouchinterest(rHand, tRoot, 1)
+                                firetouchinterest(rHand, tRoot, 0)
+                            end
                         end
                     end
                 end
-            end)
-        end
-        task.wait(0.01)
+            end
+        end)
+        -- task.wait() kaldırıldı veya minimuma çekildi (En yüksek hız)
+        RS.Heartbeat:Wait() 
     end
 end)
 
--- SAYAÇLAR
-local frameCount = 0
+-- VERİ GÜNCELLEME
+local frames = 0
 local lastUpdate = tick()
 RS.RenderStepped:Connect(function()
-    frameCount = frameCount + 1
+    frames = frames + 1
     if tick() - lastUpdate >= 1 then
-        FPSLabel.Text = "FPS: " .. frameCount
-        frameCount = 0
+        FPSLabel.Text = "FPS: " .. frames
+        frames = 0
         lastUpdate = tick()
-        local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
-        KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")
+        local stats = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
+        KillLabel.Text = "Kills: " .. (stats and tostring(stats.Value) or "0")
     end
 end)
 
--- SERVER HOP
+-- SERVER HOPPER
 task.spawn(function()
     local t = _G.HopInterval
     while t > 0 do
@@ -111,10 +117,21 @@ task.spawn(function()
         task.wait(1)
         t = t - 1
     end
-    local res = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=50"))
-    for _, s in pairs(res.data) do
-        if s.playing < (s.maxPlayers - 2) and s.id ~= game.JobId then
-            TeleportService:TeleportToPlaceInstance(game.PlaceId, s.id, LocalPlayer)
+    
+    local function findServer()
+        local success, res = pcall(function()
+            return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=50"))
+        end)
+        if success and res.data then
+            for _, s in pairs(res.data) do
+                if s.playing < (s.maxPlayers - 2) and s.id ~= game.JobId then
+                    TeleportService:TeleportToPlaceInstance(game.PlaceId, s.id, LocalPlayer)
+                    return
+                end
+            end
         end
+        task.wait(2)
+        findServer()
     end
+    findServer()
 end)
