@@ -1,7 +1,7 @@
 --[[
-    Syniox Paid Kill - Ultra Optimized
-    Optimization: Blackout & Asset Nuker by Yusuf
-    Features: Centered FPS, Larger ByYusuf Signature, Force-Hop
+    Syniox Paid Kill - Perfect Layout
+    Optimization: Ultra + Blackout
+    Features: Balanced FPS & Kill Labels, ByYusuf Signature
     Key: Syniox-X-Yusuf
     Size: 140x140
 ]]
@@ -26,25 +26,20 @@ task.spawn(function()
             gui:Destroy()
         end
     end
-
     for _, obj in pairs(workspace:GetDescendants()) do
         if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
             obj:Destroy()
         end
     end
-
     local function darkenSky()
         for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") then
-                v:Destroy()
-            end
+            if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") then v:Destroy() end
         end
         local darkSky = Instance.new("Sky")
         darkSky.Name = "DarkSky"
         darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
         darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
         darkSky.Parent = Lighting
-
         Lighting.Brightness, Lighting.ClockTime = 0, 0
         Lighting.OutdoorAmbient, Lighting.Ambient = Color3.new(0, 0, 0), Color3.new(0, 0, 0)
         Lighting.FogEnd = 100
@@ -78,43 +73,44 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 10
 Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
 
--- FPS: BÜYÜTÜLDÜ VE ORTALANDI
-FPSLabel.Position = UDim2.new(0, 0, 0, 25)
+-- FPS YAZISI (KİLL ÜSTÜNE ALINDI VE BOYUTU EŞİTLENDİ)
+FPSLabel.Position = UDim2.new(0, 0, 0, 30)
 FPSLabel.Size = UDim2.new(1, 0, 0, 20)
 FPSLabel.BackgroundTransparency = 1
 FPSLabel.Text = "FPS: 0"
 FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
-FPSLabel.Font = Enum.Font.Code
-FPSLabel.TextSize = 12 -- Büyütüldü
-FPSLabel.TextXAlignment = Enum.TextXAlignment.Center -- Ortalandı
+FPSLabel.Font = Enum.Font.GothamBold -- Kill ile aynı font
+FPSLabel.TextSize = 14 -- Boyut eşitlendi
+FPSLabel.TextXAlignment = Enum.TextXAlignment.Center
 
-KillLabel.Position = UDim2.new(0, 0, 0, 48)
-KillLabel.Size = UDim2.new(1, 0, 0, 30)
+-- KILL YAZISI (FPS ALTINDA, BOŞLUKLU)
+KillLabel.Position = UDim2.new(0, 0, 0, 55) -- 25 birim boşluk bırakıldı
+KillLabel.Size = UDim2.new(1, 0, 0, 20)
 KillLabel.BackgroundTransparency = 1
+KillLabel.Text = "Kills: 0"
 KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
 KillLabel.Font = Enum.Font.GothamBold
-KillLabel.TextSize = 15
+KillLabel.TextSize = 14 -- FPS ile aynı boyut
 
-TimerLabel.Position = UDim2.new(0, 0, 0, 80)
-TimerLabel.Size = UDim2.new(1, 0, 0, 35)
+TimerLabel.Position = UDim2.new(0, 0, 0, 85)
+TimerLabel.Size = UDim2.new(1, 0, 0, 30)
 TimerLabel.BackgroundTransparency = 1
 TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TimerLabel.Font = Enum.Font.GothamBold
-TimerLabel.TextSize = 20
+TimerLabel.TextSize = 18
 
--- BYYUSUF: BÜYÜTÜLDÜ, YERİ AYNI (SAĞ ALT)
 CreditLabel.Position = UDim2.new(0, 0, 1, -22)
 CreditLabel.Size = UDim2.new(1, -10, 0, 20)
 CreditLabel.BackgroundTransparency = 1
 CreditLabel.Text = "ByYusuf"
 CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 CreditLabel.TextTransparency = 0.4
-CreditLabel.Font = Enum.Font.GothamBold -- Daha belirgin font
-CreditLabel.TextSize = 11 -- Büyütüldü
+CreditLabel.Font = Enum.Font.GothamBold
+CreditLabel.TextSize = 11
 CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 -----------------------------------------------------------
--- [ SİSTEMLER ] --
+-- [ SİSTEMLER VE MOTORLAR ] --
 -----------------------------------------------------------
 local lastUpdate, frameCount = tick(), 0
 RS.RenderStepped:Connect(function()
