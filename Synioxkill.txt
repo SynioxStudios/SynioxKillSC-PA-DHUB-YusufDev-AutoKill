@@ -21,47 +21,52 @@ local SecretAreaPos = CFrame.new(1947, 2, 6191)
 -- [ YUSUF'S PERSISTENT OPTIMIZER ] --
 -----------------------------------------------------------
 task.spawn(function()
+    -- 1. ADIM: ANINDA TP
     local function instantTP()
-        [span_0](start_span)local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()[span_0](end_span)
+        local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
         hrp.CFrame = SecretAreaPos
     end
     instantTP()
     LocalPlayer.CharacterAdded:Connect(instantTP)
 
+    -- 2. ADIM: SÃœREKLÄ° OPTÄ°MÄ°ZASYON DÃ–NGÃœSÃœ (EFEKTLER GÄ°TMEZSE DÄ°YE)
     while true do
         pcall(function()
+            -- GUI TemizliÄŸi
             local playerGui = LocalPlayer:WaitForChild("PlayerGui")
             for _, gui in pairs(playerGui:GetChildren()) do
-                [span_1](start_span)if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end[span_1](end_span)
+                if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
             end
 
+            -- DÃ¼nya Efektlerini Sil
             for _, obj in pairs(workspace:GetDescendants()) do
-                [span_2](start_span)if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then[span_2](end_span)
+                if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then
                     obj:Destroy()
                 end
             end
 
+            -- Lighting Ayarları (Siyah Ekran Garantisi)
             Lighting.Brightness = 0
             Lighting.ClockTime = 0
-            [span_3](start_span)Lighting.GlobalShadows = false[span_3](end_span)
+            Lighting.GlobalShadows = false
             Lighting.OutdoorAmbient = Color3.new(0,0,0)
             Lighting.Ambient = Color3.new(0,0,0)
             
             for _, v in pairs(Lighting:GetChildren()) do
                 if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
-                    [span_4](start_span)v:Destroy()[span_4](end_span)
+                    v:Destroy()
                 end
             end
             
             if not Lighting:FindFirstChild("DarkSky") then
                 local darkSky = Instance.new("Sky", Lighting)
-                [span_5](start_span)darkSky.Name = "DarkSky"[span_5](end_span)
+                darkSky.Name = "DarkSky"
                 darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
                 darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
             end
         end)
-        task.wait(5)
+        task.wait(5) -- Her 5 saniyede bir dÃ¼nyayÄ± tekrar temizle
     end
 end)
 
@@ -70,7 +75,7 @@ end)
 -----------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "SynioxGui"
-[span_6](start_span)local MainFrame = Instance.new("Frame", ScreenGui)[span_6](end_span)
+local MainFrame = Instance.new("Frame", ScreenGui)
 local Title = Instance.new("TextLabel", MainFrame)
 local FPSLabel = Instance.new("TextLabel", MainFrame)
 local KillLabel = Instance.new("TextLabel", MainFrame)
@@ -85,7 +90,7 @@ MainFrame.Active, MainFrame.Draggable = true, true
 
 Title.Size = UDim2.new(1, 0, 0, 22)
 Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
-Title.Text = "🔥 Syniox Paid Kill 🔥" -- Başlık güncellendi
+Title.Text = "Syniox Paid Kill"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 10
@@ -94,8 +99,7 @@ Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
 FPSLabel.Position = UDim2.new(0, 0, 0, 30)
 FPSLabel.Size = UDim2.new(1, 0, 0, 20)
 FPSLabel.BackgroundTransparency = 1
-[span_7](start_span)FPSLabel.Text = "⚡ FPS: 0"[span_7](end_span) -- Emoji eklendi
-FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+FPSLabel.Text = "FPS: 0"; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
 FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14
 FPSLabel.TextXAlignment = Enum.TextXAlignment.Center
 
@@ -103,54 +107,51 @@ KillLabel.Position = UDim2.new(0, 0, 0, 55)
 KillLabel.Size = UDim2.new(1, 0, 0, 20)
 KillLabel.BackgroundTransparency = 1
 KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-[span_8](start_span)KillLabel.Font = Enum.Font.GothamBold;[span_8](end_span)
-KillLabel.TextSize = 14
+KillLabel.Font = Enum.Font.GothamBold; KillLabel.TextSize = 14
 
 TimerLabel.Position = UDim2.new(0, 0, 0, 85)
 TimerLabel.Size = UDim2.new(1, 0, 0, 30)
 TimerLabel.BackgroundTransparency = 1
 TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-[span_9](start_span)TimerLabel.Font = Enum.Font.GothamBold;[span_9](end_span)
-TimerLabel.TextSize = 18
+TimerLabel.Font = Enum.Font.GothamBold; TimerLabel.TextSize = 18
 
 CreditLabel.Position = UDim2.new(0, 0, 1, -22)
 CreditLabel.Size = UDim2.new(1, -10, 0, 20)
 CreditLabel.BackgroundTransparency = 1
-[span_10](start_span)CreditLabel.Text = "👤 ByYusuf";[span_10](end_span) -- Emoji eklendi
+CreditLabel.Text = "ByYusuf"; CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 CreditLabel.TextTransparency = 0.4; CreditLabel.Font = Enum.Font.GothamBold
-[span_11](start_span)CreditLabel.TextSize = 11;[span_11](end_span)
-CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
+CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 -----------------------------------------------------------
--- [ KATLİAM MOTORU VE HOPPER ] --
+-- [ KATLIAM VE HOPPER ] --
 -----------------------------------------------------------
 local lastUpdate, frameCount = tick(), 0
 RS.RenderStepped:Connect(function()
     frameCount = frameCount + 1
     if tick() - lastUpdate >= 1 then
-        FPSLabel.Text = "⚡ FPS: " .. frameCount
+        FPSLabel.Text = "FPS: " .. frameCount
         frameCount, lastUpdate = 0, tick()
     end
     local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
-    KillLabel.Text = "💀 Kills: " .. (kills and tostring(kills.Value) or "0") -- Emoji eklendi
+    KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")
 end)
 
 task.spawn(function()
     while _G.KillActive do
         pcall(function()
-            [span_12](start_span)local char = LocalPlayer.Character[span_12](end_span)
+            local char = LocalPlayer.Character
             local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
             if punch and char:FindFirstChild("RightHand") then
                 punch.Parent = char
                 for i = 1, 15 do LocalPlayer.muscleEvent:FireServer("punch", "rightHand") end
-                [span_13](start_span)for _, target in ipairs(Players:GetPlayers()) do[span_13](end_span)
+                for _, target in ipairs(Players:GetPlayers()) do
                     if target ~= LocalPlayer and target.Character then
                         local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
                         local tHum = target.Character:FindFirstChild("Humanoid")
-                        [span_14](start_span)if tRoot and tHum and tHum.Health > 0 then[span_14](end_span)
+                        if tRoot and tHum and tHum.Health > 0 then
                             firetouchinterest(char.RightHand, tRoot, 1)
                             firetouchinterest(char.RightHand, tRoot, 0)
-                        [span_15](start_span)end[span_15](end_span)
+                        end
                     end
                 end
             end
@@ -160,10 +161,10 @@ task.spawn(function()
 end)
 
 local function forceHop()
-    TimerLabel.Text = "🌀 TP..." -- Emoji eklendi
+    TimerLabel.Text = "TP..."
     local success, result = pcall(function()
         return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
-    [span_16](start_span)end)[span_16](end_span)
+    end)
     if success and result then
         for _, server in pairs(result) do
             if server.playing < server.maxPlayers and server.id ~= game.JobId then
@@ -171,14 +172,14 @@ local function forceHop()
                 task.wait(1.5)
             end
         end
-    [span_17](start_span)end[span_17](end_span)
+    end
     task.wait(1); forceHop()
 end
 
 task.spawn(function()
     local t = _G.HopInterval
     while t > 0 do
-        TimerLabel.Text = "⏳ Hop: " .. t .. "s" -- Emoji eklendi
+        TimerLabel.Text = "Hop: " .. t .. "s"
         task.wait(1); t = t - 1
     end
     forceHop()
