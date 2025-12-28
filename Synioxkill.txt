@@ -1,6 +1,7 @@
 --[[
-    Syniox Paid Kill - TP FIRST EDITION
-    Priority: Instant TP -> Optimization -> Kill
+    Syniox Paid Kill - Force-Optimizer
+    Fix: Persistent Blackout & Effect Removal
+    Priority: Instant TP -> Loop Optimization -> Kill
     Location: Secret Area (1947, 2, 6191)
     Key: Syniox-X-Yusuf
 ]]
@@ -17,41 +18,56 @@ _G.HopInterval = 60
 local SecretAreaPos = CFrame.new(1947, 2, 6191)
 
 -----------------------------------------------------------
--- [ ANA ÇALIŞMA SIRALAMASI ] --
+-- [ YUSUF'S PERSISTENT OPTIMIZER ] --
 -----------------------------------------------------------
 task.spawn(function()
-    -- ADIM 1: İLK İŞ TP OLMAK
+    -- 1. ADIM: ANINDA TP
     local function instantTP()
         local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
-        -- Hiç beklemeden direkt kordinata çeker
         hrp.CFrame = SecretAreaPos
     end
     instantTP()
     LocalPlayer.CharacterAdded:Connect(instantTP)
 
-    -- ADIM 2: TP SONRASI EFEKTLERİ VE GUI'LERİ TEMİZLE
-    task.wait(0.2) -- TP'nin işlendiğinden emin olmak için çok kısa bir ara
-    local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-    for _, gui in pairs(playerGui:GetChildren()) do
-        if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
+    -- 2. ADIM: SÜREKLİ OPTİMİZASYON DÖNGÜSÜ (EFEKTLER GİTMEZSE DİYE)
+    while true do
+        pcall(function()
+            -- GUI Temizliği
+            local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+            for _, gui in pairs(playerGui:GetChildren()) do
+                if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
+            end
+
+            -- Dünya Efektlerini Sil
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then
+                    obj:Destroy()
+                end
+            end
+
+            -- Lighting Ayarları (Siyah Ekran Garantisi)
+            Lighting.Brightness = 0
+            Lighting.ClockTime = 0
+            Lighting.GlobalShadows = false
+            Lighting.OutdoorAmbient = Color3.new(0,0,0)
+            Lighting.Ambient = Color3.new(0,0,0)
+            
+            for _, v in pairs(Lighting:GetChildren()) do
+                if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
+                    v:Destroy()
+                end
+            end
+            
+            if not Lighting:FindFirstChild("DarkSky") then
+                local darkSky = Instance.new("Sky", Lighting)
+                darkSky.Name = "DarkSky"
+                darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+                darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+            end
+        end)
+        task.wait(5) -- Her 5 saniyede bir dünyayı tekrar temizle
     end
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
-            obj:Destroy()
-        end
-    end
-    
-    -- Karanlık Mod Uygula
-    for _, v in pairs(Lighting:GetChildren()) do
-        if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") then v:Destroy() end
-    end
-    local darkSky = Instance.new("Sky", Lighting)
-    darkSky.Name = "DarkSky"
-    darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-    darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-    Lighting.Brightness, Lighting.ClockTime = 0, 0
-    Lighting.OutdoorAmbient, Lighting.Ambient = Color3.new(0, 0, 0), Color3.new(0, 0, 0)
 end)
 
 -----------------------------------------------------------
@@ -107,7 +123,7 @@ CreditLabel.TextTransparency = 0.4; CreditLabel.Font = Enum.Font.GothamBold
 CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 -----------------------------------------------------------
--- [ MOTORLAR VE HOPPER ] --
+-- [ KATLİAM MOTORU VE HOPPER ] --
 -----------------------------------------------------------
 local lastUpdate, frameCount = tick(), 0
 RS.RenderStepped:Connect(function()
