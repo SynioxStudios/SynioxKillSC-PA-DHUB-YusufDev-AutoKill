@@ -1,9 +1,8 @@
 --[[
-    Syniox Paid Kill - Perfect Layout
+    Syniox Paid Kill - Secret Area
+    Auto-TP: 1947, 2, 6191 (Secret Area)
     Optimization: Ultra + Blackout
-    Features: Balanced FPS & Kill Labels, ByYusuf Signature
     Key: Syniox-X-Yusuf
-    Size: 140x140
 ]]
 
 local Players = game:GetService("Players")
@@ -14,37 +13,33 @@ local TeleportService = game:GetService("TeleportService")
 local Lighting = game:GetService("Lighting")
 
 _G.KillActive = true
-_G.HopInterval = 45
+_G.HopInterval = 60
+local SecretAreaPos = CFrame.new(1947, 2, 6191) -- Senin verdiğin kordinatlar
 
 -----------------------------------------------------------
--- [ YUSUF'S FULL OPTIMIZATION ENGINE ] --
+-- [ YUSUF'S OPTIMIZATION & SECRET TP ] --
 -----------------------------------------------------------
 task.spawn(function()
+    -- Işınlanma ve Hazırlık
+    local function preparePlayer()
+        local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local hrp = char:WaitForChild("HumanoidRootPart")
+        task.wait(0.5)
+        hrp.CFrame = SecretAreaPos -- Otomatik Secret Area TP
+    end
+    preparePlayer()
+    LocalPlayer.CharacterAdded:Connect(preparePlayer)
+
+    -- Optimizasyon
     local playerGui = LocalPlayer:WaitForChild("PlayerGui")
     for _, gui in pairs(playerGui:GetChildren()) do
-        if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then
-            gui:Destroy()
-        end
+        if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
     end
     for _, obj in pairs(workspace:GetDescendants()) do
         if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
             obj:Destroy()
         end
     end
-    local function darkenSky()
-        for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") then v:Destroy() end
-        end
-        local darkSky = Instance.new("Sky")
-        darkSky.Name = "DarkSky"
-        darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-        darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-        darkSky.Parent = Lighting
-        Lighting.Brightness, Lighting.ClockTime = 0, 0
-        Lighting.OutdoorAmbient, Lighting.Ambient = Color3.new(0, 0, 0), Color3.new(0, 0, 0)
-        Lighting.FogEnd = 100
-    end
-    darkenSky()
 end)
 
 -----------------------------------------------------------
@@ -73,24 +68,21 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 10
 Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
 
--- FPS YAZISI (KİLL ÜSTÜNE ALINDI VE BOYUTU EŞİTLENDİ)
 FPSLabel.Position = UDim2.new(0, 0, 0, 30)
 FPSLabel.Size = UDim2.new(1, 0, 0, 20)
 FPSLabel.BackgroundTransparency = 1
 FPSLabel.Text = "FPS: 0"
 FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
-FPSLabel.Font = Enum.Font.GothamBold -- Kill ile aynı font
-FPSLabel.TextSize = 14 -- Boyut eşitlendi
+FPSLabel.Font = Enum.Font.GothamBold
+FPSLabel.TextSize = 14
 FPSLabel.TextXAlignment = Enum.TextXAlignment.Center
 
--- KILL YAZISI (FPS ALTINDA, BOŞLUKLU)
-KillLabel.Position = UDim2.new(0, 0, 0, 55) -- 25 birim boşluk bırakıldı
+KillLabel.Position = UDim2.new(0, 0, 0, 55)
 KillLabel.Size = UDim2.new(1, 0, 0, 20)
 KillLabel.BackgroundTransparency = 1
-KillLabel.Text = "Kills: 0"
 KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
 KillLabel.Font = Enum.Font.GothamBold
-KillLabel.TextSize = 14 -- FPS ile aynı boyut
+KillLabel.TextSize = 14
 
 TimerLabel.Position = UDim2.new(0, 0, 0, 85)
 TimerLabel.Size = UDim2.new(1, 0, 0, 30)
@@ -110,7 +102,7 @@ CreditLabel.TextSize = 11
 CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 -----------------------------------------------------------
--- [ SİSTEMLER VE MOTORLAR ] --
+-- [ KATLİAM MOTORU ] --
 -----------------------------------------------------------
 local lastUpdate, frameCount = tick(), 0
 RS.RenderStepped:Connect(function()
@@ -147,6 +139,7 @@ task.spawn(function()
     end
 end)
 
+-- SERVER HOPPER
 local function forceHop()
     TimerLabel.Text = "TP..."
     local success, result = pcall(function()
@@ -172,3 +165,4 @@ task.spawn(function()
     end
     forceHop()
 end)
+
