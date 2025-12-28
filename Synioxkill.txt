@@ -1,4 +1,11 @@
--- [ REVISED SYNIOX KILL PAID - STABLE & FAST ] --
+--[[
+    Syniox Paid Kill - Force-Optimizer
+    Fix: Persistent Blackout & Effect Removal
+    Priority: Instant TP -> Loop Optimization -> Kill
+    Location: Secret Area (1947, 2, 6191)
+    Key: Syniox-X-Yusuf
+]]
+
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local RS = game:GetService("RunService")
@@ -8,12 +15,14 @@ local Lighting = game:GetService("Lighting")
 
 _G.KillActive = true
 _G.HopInterval = 50
-[span_0](start_span)local SecretAreaPos = CFrame.new(1947, 2, 6191)[span_0](end_span)
+local SecretAreaPos = CFrame.new(1947, 2, 6191)
 
--- [ YUSUF'S OPTIMIZER - RE-CHECKED ] --
+-----------------------------------------------------------
+-- [ YUSUF'S PERSISTENT OPTIMIZER ] --
+-----------------------------------------------------------
 task.spawn(function()
     local function instantTP()
-        [span_1](start_span)local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()[span_1](end_span)
+        [span_0](start_span)local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()[span_0](end_span)
         local hrp = char:WaitForChild("HumanoidRootPart")
         hrp.CFrame = SecretAreaPos
     end
@@ -22,64 +31,99 @@ task.spawn(function()
 
     while true do
         pcall(function()
-            -- GUI & World Cleanup
-            for _, obj in pairs(workspace:GetDescendants()) do
-                [span_2](start_span)if obj:IsA("ParticleEmitter") or obj:IsA("Trail") then obj:Destroy() end[span_2](end_span)
+            local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+            for _, gui in pairs(playerGui:GetChildren()) do
+                [span_1](start_span)if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end[span_1](end_span)
             end
+
+            for _, obj in pairs(workspace:GetDescendants()) do
+                [span_2](start_span)if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then[span_2](end_span)
+                    obj:Destroy()
+                end
+            end
+
             Lighting.Brightness = 0
             Lighting.ClockTime = 0
             [span_3](start_span)Lighting.GlobalShadows = false[span_3](end_span)
+            Lighting.OutdoorAmbient = Color3.new(0,0,0)
+            Lighting.Ambient = Color3.new(0,0,0)
+            
+            for _, v in pairs(Lighting:GetChildren()) do
+                if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
+                    [span_4](start_span)v:Destroy()[span_4](end_span)
+                end
+            end
+            
+            if not Lighting:FindFirstChild("DarkSky") then
+                local darkSky = Instance.new("Sky", Lighting)
+                [span_5](start_span)darkSky.Name = "DarkSky"[span_5](end_span)
+                darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+                darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+            end
         end)
         task.wait(5)
     end
 end)
 
--- [ GUI - 130x130 SIZE UPDATED ] --
+-----------------------------------------------------------
+-- [ SYNIOX GUI - BYYUSUF ] --
+-----------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "SynioxGui"
-
-local MainFrame = Instance.new("Frame", ScreenGui)
-[span_4](start_span)MainFrame.Size = UDim2.new(0, 130, 0, 130) -- İsteğin üzerine 130x130 yapıldı[span_4](end_span)
-MainFrame.Position = UDim2.new(0.5, -65, 0.5, -65)
-MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
-MainFrame.BorderSizePixel = 0
-MainFrame.Active, MainFrame.Draggable = true, true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
-
+[span_6](start_span)local MainFrame = Instance.new("Frame", ScreenGui)[span_6](end_span)
 local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 28)
-Title.Text = "🔥 Syniox Kill Paid 🔥"
-Title.TextSize = 12 -- Yazı büyütüldü
-Title.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+local FPSLabel = Instance.new("TextLabel", MainFrame)
+local KillLabel = Instance.new("TextLabel", MainFrame)
+local TimerLabel = Instance.new("TextLabel", MainFrame)
+local CreditLabel = Instance.new("TextLabel", MainFrame)
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+MainFrame.Position = UDim2.new(0.5, -70, 0.5, -70)
+MainFrame.Size = UDim2.new(0, 140, 0, 140)
+MainFrame.Active, MainFrame.Draggable = true, true
+
+Title.Size = UDim2.new(1, 0, 0, 22)
+Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
+Title.Text = "🔥 Syniox Paid Kill 🔥" -- Başlık güncellendi
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
-Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 12)
+Title.TextSize = 10
+Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
 
-local FPSLabel = Instance.new("TextLabel", MainFrame)
-FPSLabel.Position = UDim2.new(0, 0, 0, 35)
-FPSLabel.Size = UDim2.new(1, 0, 0, 25)
-[span_5](start_span)FPSLabel.TextSize = 16 -- Büyütüldü[span_5](end_span)
-FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+FPSLabel.Position = UDim2.new(0, 0, 0, 30)
+FPSLabel.Size = UDim2.new(1, 0, 0, 20)
 FPSLabel.BackgroundTransparency = 1
-FPSLabel.Font = Enum.Font.GothamBold
+[span_7](start_span)FPSLabel.Text = "⚡ FPS: 0"[span_7](end_span) -- Emoji eklendi
+FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14
+FPSLabel.TextXAlignment = Enum.TextXAlignment.Center
 
-local KillLabel = Instance.new("TextLabel", MainFrame)
-KillLabel.Position = UDim2.new(0, 0, 0, 65)
-KillLabel.Size = UDim2.new(1, 0, 0, 25)
-[span_6](start_span)KillLabel.TextSize = 16 -- Büyütüldü[span_6](end_span)
-KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+KillLabel.Position = UDim2.new(0, 0, 0, 55)
+KillLabel.Size = UDim2.new(1, 0, 0, 20)
 KillLabel.BackgroundTransparency = 1
-KillLabel.Font = Enum.Font.GothamBold
+KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+[span_8](start_span)KillLabel.Font = Enum.Font.GothamBold;[span_8](end_span)
+KillLabel.TextSize = 14
 
-local TimerLabel = Instance.new("TextLabel", MainFrame)
-TimerLabel.Position = UDim2.new(0, 0, 0, 95)
+TimerLabel.Position = UDim2.new(0, 0, 0, 85)
 TimerLabel.Size = UDim2.new(1, 0, 0, 30)
-[span_7](start_span)TimerLabel.TextSize = 22 -- Büyütüldü[span_7](end_span)
-TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TimerLabel.BackgroundTransparency = 1
-TimerLabel.Font = Enum.Font.GothamBold
+TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+[span_9](start_span)TimerLabel.Font = Enum.Font.GothamBold;[span_9](end_span)
+TimerLabel.TextSize = 18
 
--- [ ULTRA KILL ENGINE - OPTIMIZED ] --
+CreditLabel.Position = UDim2.new(0, 0, 1, -22)
+CreditLabel.Size = UDim2.new(1, -10, 0, 20)
+CreditLabel.BackgroundTransparency = 1
+[span_10](start_span)CreditLabel.Text = "👤 ByYusuf";[span_10](end_span) -- Emoji eklendi
+CreditLabel.TextTransparency = 0.4; CreditLabel.Font = Enum.Font.GothamBold
+[span_11](start_span)CreditLabel.TextSize = 11;[span_11](end_span)
+CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
+
+-----------------------------------------------------------
+-- [ KATLİAM MOTORU VE HOPPER ] --
+-----------------------------------------------------------
 local lastUpdate, frameCount = tick(), 0
 RS.RenderStepped:Connect(function()
     frameCount = frameCount + 1
@@ -88,54 +132,53 @@ RS.RenderStepped:Connect(function()
         frameCount, lastUpdate = 0, tick()
     end
     local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
-    KillLabel.Text = "💀 Kills: " .. (kills and tostring(kills.Value) or "0")
+    KillLabel.Text = "💀 Kills: " .. (kills and tostring(kills.Value) or "0") -- Emoji eklendi
 end)
 
 task.spawn(function()
     while _G.KillActive do
         pcall(function()
-            local char = LocalPlayer.Character
+            [span_12](start_span)local char = LocalPlayer.Character[span_12](end_span)
             local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
             if punch and char:FindFirstChild("RightHand") then
                 punch.Parent = char
-                -[span_8](start_span)- Hız artırıldı: Saniyede 60 vuruş isteği[span_8](end_span)
-                for i = 1, 60 do 
-                    LocalPlayer.muscleEvent:FireServer("punch", "rightHand") 
-                end
-                
-                for _, target in ipairs(Players:GetPlayers()) do
+                for i = 1, 15 do LocalPlayer.muscleEvent:FireServer("punch", "rightHand") end
+                [span_13](start_span)for _, target in ipairs(Players:GetPlayers()) do[span_13](end_span)
                     if target ~= LocalPlayer and target.Character then
                         local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
                         local tHum = target.Character:FindFirstChild("Humanoid")
-                        [span_9](start_span)if tRoot and tHum and tHum.Health > 0 then[span_9](end_span)
-                            [span_10](start_span)firetouchinterest(char.RightHand, tRoot, 1)[span_10](end_span)
+                        [span_14](start_span)if tRoot and tHum and tHum.Health > 0 then[span_14](end_span)
+                            firetouchinterest(char.RightHand, tRoot, 1)
                             firetouchinterest(char.RightHand, tRoot, 0)
-                        end
+                        [span_15](start_span)end[span_15](end_span)
                     end
                 end
             end
         end)
-        task.wait() -- Maksimum hız için kısa bekleme
+        RS.Stepped:Wait()
     end
 end)
 
--- [ FULL SERVER HOP ] --
 local function forceHop()
-    TimerLabel.Text = "🌀 TP..."
-    pcall(function()
-        [span_11](start_span)local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data[span_11](end_span)
-        for _, server in pairs(servers) do
+    TimerLabel.Text = "🌀 TP..." -- Emoji eklendi
+    local success, result = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
+    [span_16](start_span)end)[span_16](end_span)
+    if success and result then
+        for _, server in pairs(result) do
             if server.playing < server.maxPlayers and server.id ~= game.JobId then
-                [span_12](start_span)TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)[span_12](end_span)
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
+                task.wait(1.5)
             end
         end
-    end)
+    [span_17](start_span)end[span_17](end_span)
+    task.wait(1); forceHop()
 end
 
 task.spawn(function()
     local t = _G.HopInterval
     while t > 0 do
-        TimerLabel.Text = "⏳ " .. t .. "s"
+        TimerLabel.Text = "⏳ Hop: " .. t .. "s" -- Emoji eklendi
         task.wait(1); t = t - 1
     end
     forceHop()
