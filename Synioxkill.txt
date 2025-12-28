@@ -1,7 +1,7 @@
 --[[
-    Syniox Paid Kill - Secret Area
-    Auto-TP: 1947, 2, 6191 (Secret Area)
-    Optimization: Ultra + Blackout
+    Syniox Paid Kill - TP FIRST EDITION
+    Priority: Instant TP -> Optimization -> Kill
+    Location: Secret Area (1947, 2, 6191)
     Key: Syniox-X-Yusuf
 ]]
 
@@ -14,23 +14,24 @@ local Lighting = game:GetService("Lighting")
 
 _G.KillActive = true
 _G.HopInterval = 60
-local SecretAreaPos = CFrame.new(1947, 2, 6191) -- Senin verdiğin kordinatlar
+local SecretAreaPos = CFrame.new(1947, 2, 6191)
 
 -----------------------------------------------------------
--- [ YUSUF'S OPTIMIZATION & SECRET TP ] --
+-- [ ANA ÇALIŞMA SIRALAMASI ] --
 -----------------------------------------------------------
 task.spawn(function()
-    -- Işınlanma ve Hazırlık
-    local function preparePlayer()
+    -- ADIM 1: İLK İŞ TP OLMAK
+    local function instantTP()
         local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
-        task.wait(0.5)
-        hrp.CFrame = SecretAreaPos -- Otomatik Secret Area TP
+        -- Hiç beklemeden direkt kordinata çeker
+        hrp.CFrame = SecretAreaPos
     end
-    preparePlayer()
-    LocalPlayer.CharacterAdded:Connect(preparePlayer)
+    instantTP()
+    LocalPlayer.CharacterAdded:Connect(instantTP)
 
-    -- Optimizasyon
+    -- ADIM 2: TP SONRASI EFEKTLERİ VE GUI'LERİ TEMİZLE
+    task.wait(0.2) -- TP'nin işlendiğinden emin olmak için çok kısa bir ara
     local playerGui = LocalPlayer:WaitForChild("PlayerGui")
     for _, gui in pairs(playerGui:GetChildren()) do
         if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
@@ -40,10 +41,21 @@ task.spawn(function()
             obj:Destroy()
         end
     end
+    
+    -- Karanlık Mod Uygula
+    for _, v in pairs(Lighting:GetChildren()) do
+        if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") then v:Destroy() end
+    end
+    local darkSky = Instance.new("Sky", Lighting)
+    darkSky.Name = "DarkSky"
+    darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+    darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+    Lighting.Brightness, Lighting.ClockTime = 0, 0
+    Lighting.OutdoorAmbient, Lighting.Ambient = Color3.new(0, 0, 0), Color3.new(0, 0, 0)
 end)
 
 -----------------------------------------------------------
--- [ SYNIOX GUI DESIGN ] --
+-- [ SYNIOX GUI - BYYUSUF ] --
 -----------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "SynioxGui"
@@ -71,38 +83,31 @@ Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
 FPSLabel.Position = UDim2.new(0, 0, 0, 30)
 FPSLabel.Size = UDim2.new(1, 0, 0, 20)
 FPSLabel.BackgroundTransparency = 1
-FPSLabel.Text = "FPS: 0"
-FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
-FPSLabel.Font = Enum.Font.GothamBold
-FPSLabel.TextSize = 14
+FPSLabel.Text = "FPS: 0"; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14
 FPSLabel.TextXAlignment = Enum.TextXAlignment.Center
 
 KillLabel.Position = UDim2.new(0, 0, 0, 55)
 KillLabel.Size = UDim2.new(1, 0, 0, 20)
 KillLabel.BackgroundTransparency = 1
 KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-KillLabel.Font = Enum.Font.GothamBold
-KillLabel.TextSize = 14
+KillLabel.Font = Enum.Font.GothamBold; KillLabel.TextSize = 14
 
 TimerLabel.Position = UDim2.new(0, 0, 0, 85)
 TimerLabel.Size = UDim2.new(1, 0, 0, 30)
 TimerLabel.BackgroundTransparency = 1
 TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TimerLabel.Font = Enum.Font.GothamBold
-TimerLabel.TextSize = 18
+TimerLabel.Font = Enum.Font.GothamBold; TimerLabel.TextSize = 18
 
 CreditLabel.Position = UDim2.new(0, 0, 1, -22)
 CreditLabel.Size = UDim2.new(1, -10, 0, 20)
 CreditLabel.BackgroundTransparency = 1
-CreditLabel.Text = "ByYusuf"
-CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreditLabel.TextTransparency = 0.4
-CreditLabel.Font = Enum.Font.GothamBold
-CreditLabel.TextSize = 11
-CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
+CreditLabel.Text = "ByYusuf"; CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+CreditLabel.TextTransparency = 0.4; CreditLabel.Font = Enum.Font.GothamBold
+CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 -----------------------------------------------------------
--- [ KATLİAM MOTORU ] --
+-- [ MOTORLAR VE HOPPER ] --
 -----------------------------------------------------------
 local lastUpdate, frameCount = tick(), 0
 RS.RenderStepped:Connect(function()
@@ -139,7 +144,6 @@ task.spawn(function()
     end
 end)
 
--- SERVER HOPPER
 local function forceHop()
     TimerLabel.Text = "TP..."
     local success, result = pcall(function()
@@ -160,8 +164,7 @@ task.spawn(function()
     local t = _G.HopInterval
     while t > 0 do
         TimerLabel.Text = "Hop: " .. t .. "s"
-        task.wait(1)
-        t = t - 1
+        task.wait(1); t = t - 1
     end
     forceHop()
 end)
