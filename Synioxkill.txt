@@ -14,7 +14,7 @@ local TeleportService = game:GetService("TeleportService")
 local Lighting = game:GetService("Lighting")
 
 _G.KillActive = true
-_G.HopInterval = 50
+_G.HopInterval = 60
 local SecretAreaPos = CFrame.new(1947, 2, 6191)
 
 -----------------------------------------------------------
