@@ -1,7 +1,7 @@
 --[[
-    Syniox Paid Kill - Karma Görünür Versiyon
+    Syniox Paid Kill - Karma Koruma Versiyonu
+    Düzenleme: Karma frameleri ve gameGui artık silinmiyor.
     Discord: https://discord.gg/FsG2cGay
-    YouTube kanalımı ziyaret etmeyi unutmayın!
 ]]
 
 local Players = game:GetService("Players")
@@ -16,49 +16,48 @@ _G.HopInterval = 60
 local SecretAreaPos = CFrame.new(1947, 2, 6191)
 
 -----------------------------------------------------------
--- [ KARMA KORUMALI OPTİMİZASYON ] --
+-- [ YUSUF'S KARMA-FRIENDLY OPTIMIZER ] --
 -----------------------------------------------------------
 task.spawn(function()
-    -- Anında Işınlanma
     local function instantTP()
-        local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local hrp = char:WaitForChild("HumanoidRootPart")
-        hrp.CFrame = SecretAreaPos
+        [span_1](start_span)local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()[span_1](end_span)
+        [span_2](start_span)local hrp = char:WaitForChild("HumanoidRootPart")[span_2](end_span)
+        [span_3](start_span)hrp.CFrame = SecretAreaPos[span_3](end_span)
     end
     instantTP()
     LocalPlayer.CharacterAdded:Connect(instantTP)
 
-    -- SÜREKLİ TEMİZLİK DÖNGÜSÜ
     while true do
         pcall(function()
-            -- GUI Temizliği: Karma yazılarını içeren panelleri silmez
+            -- GUI TEMİZLİĞİ (GÜNCELLENDİ)
             local playerGui = LocalPlayer:WaitForChild("PlayerGui")
             for _, gui in pairs(playerGui:GetChildren()) do
-                if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then
-                    -- "Karma" veya "Message" içeren GUI'lere dokunmaz
-                    if not gui.Name:lower():find("karma") and not gui.Name:lower():find("message") then
-                        gui:Destroy()
+                if gui:IsA("ScreenGui") then
+                    -[span_4](start_span)- SynioxGui ve oyunun ana GUI'sini (gameGui) silme[span_4](end_span)
+                    if gui.Name ~= "SynioxGui" and gui.Name ~= "gameGui" then 
+                        gui:Destroy() 
                     end
                 end
             end
 
-            -- Dünya Efektleri: Işıkları siler ama uçuşan yazıları (BillboardGui) korur
+            -[span_5](start_span)- DÜNYA EFEKTLERİNİ SİL[span_5](end_span)
             for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then
-                    obj:Destroy()
+                [span_6](start_span)if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then[span_6](end_span)
+                    -- Karma efektlerine dokunma
+                    if not obj:FindFirstAncestor("goodKarma") and not obj:FindFirstAncestor("evilKarma") then
+                        [span_7](start_span)obj:Destroy()[span_7](end_span)
+                    end
                 end
             end
 
-            -- Lighting Ayarları: Karma yazılarının okunabilmesi için karanlığı kaldırdık
-            Lighting.Brightness = 1.5 
-            Lighting.ClockTime = 12
-            Lighting.GlobalShadows = false
-            Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
+            -[span_8](start_span)- LIGHTING AYARLARI (Yazıların görünmesi için parlaklık artırıldı)[span_8](end_span)
+            [span_9](start_span)Lighting.Brightness = 2 -- 0 yerine 2 yaptık ki o yazılar parlasın[span_9](end_span)
+            [span_10](start_span)Lighting.ClockTime = 12[span_10](end_span)
+            [span_11](start_span)Lighting.GlobalShadows = false[span_11](end_span)
             
-            -- Sadece görüntüyü aşırı bozan efektleri siler
             for _, v in pairs(Lighting:GetChildren()) do
-                if v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
-                    v:Destroy()
+                [span_12](start_span)if v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then[span_12](end_span)
+                    [span_13](start_span)v:Destroy()[span_13](end_span)
                 end
             end
         end)
@@ -69,115 +68,114 @@ end)
 -----------------------------------------------------------
 -- [ SYNIOX GUI - BYYUSUF ] --
 -----------------------------------------------------------
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-ScreenGui.Name = "SynioxGui"
-local MainFrame = Instance.new("Frame", ScreenGui)
-local Title = Instance.new("TextLabel", MainFrame)
-local FPSLabel = Instance.new("TextLabel", MainFrame)
-local KillLabel = Instance.new("TextLabel", MainFrame)
-local TimerLabel = Instance.new("TextLabel", MainFrame)
-local CreditLabel = Instance.new("TextLabel", MainFrame)
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+[span_14](start_span)local ScreenGui = Instance.new("ScreenGui", game.CoreGui)[span_14](end_span)
+[span_15](start_span)ScreenGui.Name = "SynioxGui"[span_15](end_span)
+[span_16](start_span)local MainFrame = Instance.new("Frame", ScreenGui)[span_16](end_span)
+[span_17](start_span)local Title = Instance.new("TextLabel", MainFrame)[span_17](end_span)
+[span_18](start_span)local FPSLabel = Instance.new("TextLabel", MainFrame)[span_18](end_span)
+[span_19](start_span)local KillLabel = Instance.new("TextLabel", MainFrame)[span_19](end_span)
+[span_20](start_span)local TimerLabel = Instance.new("TextLabel", MainFrame)[span_20](end_span)
+[span_21](start_span)local CreditLabel = Instance.new("TextLabel", MainFrame)[span_21](end_span)
+[span_22](start_span)Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)[span_22](end_span)
 
-MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-MainFrame.Position = UDim2.new(0.5, -70, 0.5, -70)
-MainFrame.Size = UDim2.new(0, 140, 0, 140)
-MainFrame.Active, MainFrame.Draggable = true, true
+[span_23](start_span)MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)[span_23](end_span)
+[span_24](start_span)MainFrame.Position = UDim2.new(0.5, -70, 0.5, -70)[span_24](end_span)
+[span_25](start_span)MainFrame.Size = UDim2.new(0, 140, 0, 140)[span_25](end_span)
+[span_26](start_span)MainFrame.Active, MainFrame.Draggable = true, true[span_26](end_span)
 
-Title.Size = UDim2.new(1, 0, 0, 22)
-Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
-Title.Text = "Syniox Paid Kill"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 10
-Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
+[span_27](start_span)Title.Size = UDim2.new(1, 0, 0, 22)[span_27](end_span)
+[span_28](start_span)Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)[span_28](end_span)
+[span_29](start_span)Title.Text = "Syniox Paid Kill"[span_29](end_span)
+[span_30](start_span)Title.TextColor3 = Color3.fromRGB(255, 255, 255)[span_30](end_span)
+[span_31](start_span)Title.Font = Enum.Font.GothamBold[span_31](end_span)
+[span_32](start_span)Title.TextSize = 10[span_32](end_span)
+[span_33](start_span)Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)[span_33](end_span)
 
-FPSLabel.Position = UDim2.new(0, 0, 0, 30)
-FPSLabel.Size = UDim2.new(1, 0, 0, 20)
-FPSLabel.BackgroundTransparency = 1
-FPSLabel.Text = "FPS: 0"; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
-FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14
+[span_34](start_span)FPSLabel.Position = UDim2.new(0, 0, 0, 30)[span_34](end_span)
+[span_35](start_span)FPSLabel.Size = UDim2.new(1, 0, 0, 20)[span_35](end_span)
+[span_36](start_span)FPSLabel.BackgroundTransparency = 1[span_36](end_span)
+FPSLabel.Text = "FPS: 0"; [span_37](start_span)FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)[span_37](end_span)
+FPSLabel.Font = Enum.Font.GothamBold; [span_38](start_span)FPSLabel.TextSize = 14[span_38](end_span)
 
-KillLabel.Position = UDim2.new(0, 0, 0, 55)
-KillLabel.Size = UDim2.new(1, 0, 0, 20)
-KillLabel.BackgroundTransparency = 1
-KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-KillLabel.Font = Enum.Font.GothamBold; KillLabel.TextSize = 14
+[span_39](start_span)KillLabel.Position = UDim2.new(0, 0, 0, 55)[span_39](end_span)
+[span_40](start_span)KillLabel.Size = UDim2.new(1, 0, 0, 20)[span_40](end_span)
+[span_41](start_span)KillLabel.BackgroundTransparency = 1[span_41](end_span)
+[span_42](start_span)KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)[span_42](end_span)
+KillLabel.Font = Enum.Font.GothamBold; [span_43](start_span)KillLabel.TextSize = 14[span_43](end_span)
 
-TimerLabel.Position = UDim2.new(0, 0, 0, 85)
-TimerLabel.Size = UDim2.new(1, 0, 0, 30)
-TimerLabel.BackgroundTransparency = 1
-TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TimerLabel.Font = Enum.Font.GothamBold; TimerLabel.TextSize = 18
+[span_44](start_span)TimerLabel.Position = UDim2.new(0, 0, 0, 85)[span_44](end_span)
+[span_45](start_span)TimerLabel.Size = UDim2.new(1, 0, 0, 30)[span_45](end_span)
+[span_46](start_span)TimerLabel.BackgroundTransparency = 1[span_46](end_span)
+[span_47](start_span)TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)[span_47](end_span)
+TimerLabel.Font = Enum.Font.GothamBold; [span_48](start_span)TimerLabel.TextSize = 18[span_48](end_span)
 
-CreditLabel.Position = UDim2.new(0, 0, 1, -22)
-CreditLabel.Size = UDim2.new(1, -10, 0, 20)
-CreditLabel.BackgroundTransparency = 1
-CreditLabel.Text = "ByYusuf"; CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreditLabel.TextTransparency = 0.4; CreditLabel.Font = Enum.Font.GothamBold
-CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
+[span_49](start_span)CreditLabel.Position = UDim2.new(0, 0, 1, -22)[span_49](end_span)
+[span_50](start_span)CreditLabel.Size = UDim2.new(1, -10, 0, 20)[span_50](end_span)
+[span_51](start_span)CreditLabel.BackgroundTransparency = 1[span_51](end_span)
+CreditLabel.Text = "ByYusuf"; [span_52](start_span)CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)[span_52](end_span)
+CreditLabel.TextTransparency = 0.4; [span_53](start_span)CreditLabel.Font = Enum.Font.GothamBold[span_53](end_span)
+CreditLabel.TextSize = 11; [span_54](start_span)CreditLabel.TextXAlignment = Enum.TextXAlignment.Right[span_54](end_span)
 
 -----------------------------------------------------------
 -- [ KATLIAM VE OTOMASYON ] --
 -----------------------------------------------------------
-local lastUpdate, frameCount = tick(), 0
-RS.RenderStepped:Connect(function()
-    frameCount = frameCount + 1
-    if tick() - lastUpdate >= 1 then
-        FPSLabel.Text = "FPS: " .. frameCount
-        frameCount, lastUpdate = 0, tick()
+[span_55](start_span)local lastUpdate, frameCount = tick(), 0[span_55](end_span)
+[span_56](start_span)RS.RenderStepped:Connect(function()[span_56](end_span)
+    [span_57](start_span)frameCount = frameCount + 1[span_57](end_span)
+    [span_58](start_span)if tick() - lastUpdate >= 1 then[span_58](end_span)
+        [span_59](start_span)FPSLabel.Text = "FPS: " .. frameCount[span_59](end_span)
+        [span_60](start_span)frameCount, lastUpdate = 0, tick()[span_60](end_span)
     end
-    local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
-    KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")
+    [span_61](start_span)local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")[span_61](end_span)
+    [span_62](start_span)KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")[span_62](end_span)
 end)
 
 task.spawn(function()
-    while _G.KillActive do
+    [span_63](start_span)while _G.KillActive do[span_63](end_span)
         pcall(function()
-            local char = LocalPlayer.Character
-            local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
-            if punch and char:FindFirstChild("RightHand") then
-                punch.Parent = char
-                for i = 1, 15 do LocalPlayer.muscleEvent:FireServer("punch", "rightHand") end
+            [span_64](start_span)local char = LocalPlayer.Character[span_64](end_span)
+            [span_65](start_span)local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))[span_65](end_span)
+            [span_66](start_span)if punch and char:FindFirstChild("RightHand") then[span_66](end_span)
+                [span_67](start_span)punch.Parent = char[span_67](end_span)
+                [span_68](start_span)for i = 1, 15 do LocalPlayer.muscleEvent:FireServer("punch", "rightHand") end[span_68](end_span)
             
-                for _, target in ipairs(Players:GetPlayers()) do
-                    if target ~= LocalPlayer and target.Character then
-                        local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
-                        local tHum = target.Character:FindFirstChild("Humanoid")
-                        if tRoot and tHum and tHum.Health > 0 then
-                            firetouchinterest(char.RightHand, tRoot, 1)
-                            firetouchinterest(char.RightHand, tRoot, 0)
-                        end
+                [span_69](start_span)for _, target in ipairs(Players:GetPlayers()) do[span_69](end_span)
+                    [span_70](start_span)if target ~= LocalPlayer and target.Character then[span_70](end_span)
+                        [span_71](start_span)local tRoot = target.Character:FindFirstChild("HumanoidRootPart")[span_71](end_span)
+                        [span_72](start_span)local tHum = target.Character:FindFirstChild("Humanoid")[span_72](end_span)
+                        [span_73](start_span)if tRoot and tHum and tHum.Health > 0 then[span_73](end_span)
+                            [span_74](start_span)firetouchinterest(char.RightHand, tRoot, 1)[span_74](end_span)
+                            [span_75](start_span)firetouchinterest(char.RightHand, tRoot, 0)[span_75](end_span)
+                        [span_76](start_span)end[span_76](end_span)
                     end
                 end
             end
         end)
-        RS.Stepped:Wait()
+        [span_77](start_span)RS.Stepped:Wait()[span_77](end_span)
     end
 end)
 
 local function forceHop()
-    TimerLabel.Text = "TP..."
+    [span_78](start_span)TimerLabel.Text = "TP..."[span_78](end_span)
     local success, result = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
+        [span_79](start_span)return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data[span_79](end_span)
     end)
-    if success and result then
-        for _, server in pairs(result) do
-            if server.playing < server.maxPlayers and server.id ~= game.JobId then
-                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
-                task.wait(1.5)
+    [span_80](start_span)if success and result then[span_80](end_span)
+        [span_81](start_span)for _, server in pairs(result) do[span_81](end_span)
+            [span_82](start_span)if server.playing < server.maxPlayers and server.id ~= game.JobId then[span_82](end_span)
+                [span_83](start_span)TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)[span_83](end_span)
+                [span_84](start_span)task.wait(1.5)[span_84](end_span)
             end
         end
-    end
-    task.wait(1); forceHop()
+    [span_85](start_span)end[span_85](end_span)
+    [span_86](start_span)task.wait(1); forceHop()[span_86](end_span)
 end
 
 task.spawn(function()
-    local t = _G.HopInterval
-    while t > 0 do
-        TimerLabel.Text = "Hop: " .. t .. "s"
-        task.wait(1); t = t - 1
+    [span_87](start_span)local t = _G.HopInterval[span_87](end_span)
+    [span_88](start_span)while t > 0 do[span_88](end_span)
+        [span_89](start_span)TimerLabel.Text = "Hop: " .. t .. "s"[span_89](end_span)
+        [span_90](start_span)task.wait(1); t = t - 1[span_90](end_span)
     end
-    forceHop()
+    [span_91](start_span)forceHop()[span_91](end_span)
 end)
-
