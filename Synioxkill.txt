@@ -1,72 +1,86 @@
 --[[
-    Syniox Paid Kill - Force-Optimizer
-    Fix: Specific Limit Size + Secret TP + Lock Position + 15-Punch Loop
-    Key: Syniox-X-Yusuf
+    Syniox Ücretli Öldürme - Kuvvet Optimize Edici
+    Düzeltme: Kalıcı Kararma ve Efekt Kaldırma
+    Öncelik: Anında TP -> Döngü Optimizasyonu -> Öldürme
+    Konum: Gizli Bölge (1947, 2, 6191)
+    Anahtar: Syniox-X-Yusuf
 ]]
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local RS = game:GetService("RunService")
-local HttpService = game:GetService("HttpService")
-local TeleportService = game:GetService("TeleportService")
-local Lighting = game:GetService("Lighting")
+yerel Oyuncular = oyun:GetService("Oyuncular")
+yerel LocalPlayer = Players.LocalPlayer
+yerel RS = oyun:GetService("RunService")
+yerel HttpService = oyun:GetService("HttpService")
+yerel TeleportService = oyun:GetService("TeleportService")
+yerel Aydınlatma = oyun:GetService("Aydınlatma")
 
 _G.KillActive = true
 _G.HopInterval = 60
-local SecretAreaPos = CFrame.new(1947, 2, 6191)
--- Attığın görseldeki tam sayı değeri:
-local LimitSizeValue = -9223372036854776000
+yerel SecretAreaPos = CFrame.new(1947, 2, 6191)
 
 -----------------------------------------------------------
--- [ TP, LIMIT SIZE & LOCK ] --
+-- [YUSUF'UN AZİMLİ OPTİMİZASYONCUSU] --
 -----------------------------------------------------------
-task.spawn(function()
-    local function applyEffects(char)
-        local hrp = char:WaitForChild("HumanoidRootPart")
-        
-        -- 1. Işınlanma
+görev.oluştur(fonksiyon()
+    -- 1. ADIM: ANINDA TP
+    yerel fonksiyon instantTP()
+        yerel karakter = LocalPlayer.Character veya LocalPlayer.CharacterAdded:Wait()
+        yerel hrp = char:WaitForChild("HumanoidRootPart")
         hrp.CFrame = SecretAreaPos
-        task.wait(0.5)
-        
-        -- 2. Görseldeki Özel Boyut Ayarı
-        pcall(function()
-            for _, part in pairs(char:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    -- Boyutu tam olarak istediğin sayıya çekiyoruz
-                    part.Size = Vector3.new(LimitSizeValue, LimitSizeValue, LimitSizeValue)
-                    part.CanCollide = false
-                    part.Massless = true
-                end
-            end
-        end)
-    end
+    son
+    anlıkTP()
+    LocalPlayer.CharacterAdded:Connect(instantTP)
 
-    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    applyEffects(char)
-    LocalPlayer.CharacterAdded:Connect(applyEffects)
+    -- 2. ADIM: SÜREKLİ OPTİMİZASYON DÜĞÜN (EFEKTLER GÜNÜTMEZSE DÜĞÜN)
+    doğru olsa da
+        pcall(fonksiyon()
+            -- GUI TemizliŸi
+            yerel oyuncuGui = LocalPlayer:WaitForChild("PlayerGui")
+            for _, gui in pairs(playerGui:GetChildren()) do
+                if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
+            son
 
-    -- Pozisyon Kilitleme
-    RS.Heartbeat:Connect(function()
-        if _G.KillActive and LocalPlayer.Character then
-            local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                hrp.CFrame = SecretAreaPos
-            end
-        end
-    end)
-end)
+            -- Dünyanın Efektlerini Sil
+            for _, obj in pairs(workspace:GetDescendants()) do
+                eğer obj:IsA("ParticleEmitter") veya obj:IsA("PointLight") veya obj:IsA("SpotLight") veya obj:IsA("SurfaceLight") veya obj:IsA("Trail") ise o zaman
+                    nesne:Yok Et()
+                son
+            son
+
+            -- Aydınlatma Ayarları (Siyah Ekran Garantisi)
+            Aydınlatma.Parlaklık = 0
+            Aydınlatma.SaatZamanı = 0
+            Aydınlatma.KüreselGölgeler = yanlış
+            Aydınlatma.DışMekanOrtamı = Renk3.yeni(0,0,0)
+            Aydınlatma.Ortam = Renk3.yeni(0,0,0)
+            
+            for _, v in pairs(Lighting:GetChildren()) do
+                eğer v:IsA("Gökyüzü") veya v:IsA("Atmosfer") veya v:IsA("Çiçeklenme") veya v:IsA("Bulanıklık Efekti") ise
+                    v:Yok Et()
+                son
+            son
+            
+            eğer Lighting:FindFirstChild("DarkSky") değilse o zaman
+                yerel karanlıkgökyüzü = Instance.new("Gökyüzü", Aydınlatma)
+                karanlıkGökyüzü.Adı = "KaranlıkGökyüzü"
+                darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+                darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+            son
+        son)
+        Task.wait(5) -- Her 5 saniyeden bir kez daha temizleyin
+    son
+son)
 
 -----------------------------------------------------------
 -- [ SYNIOX GUI - BYYUSUF ] --
 -----------------------------------------------------------
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+yerel ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "SynioxGui"
-local MainFrame = Instance.new("Frame", ScreenGui)
-local Title = Instance.new("TextLabel", MainFrame)
-local FPSLabel = Instance.new("TextLabel", MainFrame)
-local KillLabel = Instance.new("TextLabel", MainFrame)
-local TimerLabel = Instance.new("TextLabel", MainFrame)
-local CreditLabel = Instance.new("TextLabel", MainFrame)
+yerel MainFrame = Instance.new("Frame", ScreenGui)
+yerel Başlık = Instance.new("TextLabel", MainFrame)
+yerel FPSLabel = Instance.new("TextLabel", MainFrame)
+yerel KillLabel = Instance.new("TextLabel", MainFrame)
+yerel ZamanlayıcıEtiketi = Örnek.yeni("MetinEtiketi", AnaÇerçeve)
+yerel CreditLabel = Instance.new("TextLabel", MainFrame)
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
 MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
@@ -74,84 +88,99 @@ MainFrame.Position = UDim2.new(0.5, -70, 0.5, -70)
 MainFrame.Size = UDim2.new(0, 140, 0, 140)
 MainFrame.Active, MainFrame.Draggable = true, true
 
-Title.Size = UDim2.new(1, 0, 0, 22)
-Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
-Title.Text = "Syniox Kill Bot"
+Başlık.Boyut = UDim2.new(1, 0, 0, 22)
+Başlık.ArkaPlanRengi3 = Color3.fromRGB(160, 0, 0)
+Başlık.Metin = "Syniox Ücretli Öldürme"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.GothamBold; Title.TextSize = 10
+Başlık.Yazı Tipi = Enum.Yazı Tipi.GothamBold
+Başlık.MetinBoyutu = 10
 Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
 
-FPSLabel.Position = UDim2.new(0, 0, 0, 30); FPSLabel.Size = UDim2.new(1, 0, 0, 20)
-FPSLabel.BackgroundTransparency = 1; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
-FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14; FPSLabel.Text = "FPS: 0"
+FPSLabel.Position = UDim2.new(0, 0, 0, 30)
+FPSLabel.Size = UDim2.new(1, 0, 0, 20)
+FPSLabel.BackgroundTransparency = 1
+FPSLabel.Text = "FPS: 0"; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14
+FPSLabel.TextXAlignment = Enum.TextXAlignment.Center
 
-KillLabel.Position = UDim2.new(0, 0, 0, 55); KillLabel.Size = UDim2.new(1, 0, 0, 20)
-KillLabel.BackgroundTransparency = 1; KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+KillLabel.Position = UDim2.new(0, 0, 0, 55)
+KillLabel.Size = UDim2.new(1, 0, 0, 20)
+KillLabel.BackgroundTransparency = 1
+KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
 KillLabel.Font = Enum.Font.GothamBold; KillLabel.TextSize = 14
 
-TimerLabel.Position = UDim2.new(0, 0, 0, 85); TimerLabel.Size = UDim2.new(1, 0, 0, 30)
-TimerLabel.BackgroundTransparency = 1; TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TimerLabel.Position = UDim2.new(0, 0, 0, 85)
+TimerLabel.Size = UDim2.new(1, 0, 0, 30)
+ZamanlayıcıEtiketi.ArkaPlanŞeffaflığı = 1
+TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TimerLabel.Font = Enum.Font.GothamBold; TimerLabel.TextSize = 18
 
-CreditLabel.Position = UDim2.new(0, 0, 1, -22); CreditLabel.Size = UDim2.new(1, -10, 0, 20)
-CreditLabel.BackgroundTransparency = 1; CreditLabel.Text = "@Syniox-X-Yusuf"
-CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255); CreditLabel.TextTransparency = 0.4
-CreditLabel.Font = Enum.Font.GothamBold; CreditLabel.TextSize = 9; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
+CreditLabel.Position = UDim2.new(0, 0, 1, -22)
+CreditLabel.Size = UDim2.new(1, -10, 0, 20)
+CreditLabel.BackgroundTransparency = 1
+CreditLabel.Text = "Yusuf'tan"; CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+CreditLabel.TextTransparency = 0.4; CreditLabel.Font = Enum.Font.GothamBold
+CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 -----------------------------------------------------------
--- [ 15-PUNCH KILL LOOP ] --
+-- [ KATLIAM VE HOPPER ] --
 -----------------------------------------------------------
-task.spawn(function()
-    while _G.KillActive do
-        pcall(function()
-            local char = LocalPlayer.Character
-            local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
-            
-            if punch and char:FindFirstChild("RightHand") then
-                punch.Parent = char
-                for i = 1, 15 do 
-                    LocalPlayer.muscleEvent:FireServer("punch", "rightHand") 
-                end
+yerel songüncelleme, kare sayısı = tick(), 0
+RS.RenderStepped:Connect(function()
+    Kare sayısı = Kare sayısı + 1
+    eğer tick() - lastUpdate >= 1 ise
+        FPSLabel.Text = "FPS: " .. frameCount
+        çerçeve sayısı, son güncelleme = 0, tik()
+    son
+    yerel öldürmeler = LocalPlayer:FindFirstChild("leaderstats") ve LocalPlayer.leaderstats:FindFirstChild("Kills")
+    KillLabel.Text = "Öldürmeler: " .. (öldürmeler ve tostring(kills.Value) veya "0")
+son)
+
+görev.oluştur(fonksiyon()
+    _G.KillActive olduğu sürece
+        pcall(fonksiyon()
+            yerel karakter = LocalPlayer.Character
+            yerel yumruk = LocalPlayer.Backpack:FindFirstChild("Punch") veya (char ve char:FindFirstChild("Punch"))
+            eğer yumruk ve karakter:FindFirstChild("RightHand") ise o zaman
+                yumruk.Ebeveyn = karakter
+                for i = 1, 15 do LocalPlayer.muscleEvent:FireServer("punch", "rightHand") end
                 for _, target in ipairs(Players:GetPlayers()) do
-                    if target ~= LocalPlayer and target.Character then
-                        local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
-                        if tRoot then
+                    Eğer hedef LocalPlayer'a eşitse ve hedef.Character ise,
+                        yerel tRoot = target.Character:FindFirstChild("HumanoidRootPart")
+                        yerel tHum = hedef.Karakter:FindFirstChild("İnsansı")
+                        Eğer tRoot, tHum ve tHum.Health > 0 ise
                             firetouchinterest(char.RightHand, tRoot, 1)
                             firetouchinterest(char.RightHand, tRoot, 0)
-                        end
-                    end
-                end
-            end
-        end)
-        task.wait() 
-    end
-end)
+                        son
+                    son
+                son
+            son
+        son)
+        RS.Adımlı:Bekle()
+    son
+son)
 
------------------------------------------------------------
--- [ SERVER HOPPER ] --
------------------------------------------------------------
-local function forceHop()
-    TimerLabel.Text = "TP..."
-    local success, result = pcall(function()
+yerel fonksiyon forceHop()
+    Zamanlayıcı Etiketi.Metin = "TP..."
+    yerel başarı, sonuç = pcall(fonksiyon()
         return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
-    end)
-    if success and result then
+    son)
+    başarı ve sonuç elde edilirse o zaman
         for _, server in pairs(result) do
-            if server.playing < server.maxPlayers and server.id ~= game.JobId then
+            Eğer sunucunun oynadığı oyuncu sayısı sunucunun maksimum oyuncu sayısından az ise ve sunucunun kimliği oyunun iş kimliğine eşitse, o zaman
                 TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
-                task.wait(1.5)
-            end
-        end
-    end
-    task.wait(1); forceHop()
-end
+                görev.bekle(1.5)
+            son
+        son
+    son
+    görev.bekle(1); zorlaAtla()
+son
 
-task.spawn(function()
-    local t = _G.HopInterval
-    while t > 0 do
-        TimerLabel.Text = "Hop: " .. t .. "s"
-        task.wait(1); t = t - 1
-    end
+görev.oluştur(fonksiyon()
+    yerel t = _G.HopInterval
+    t > 0 olduğu sürece
+        TimerLabel.Text = "Atlama: " .. t .. "s"
+        görev.bekle(1); t = t - 1
+    son
     forceHop()
-end)
-
+son)
