@@ -1,8 +1,6 @@
 --[[
     Syniox Paid Kill - Force-Optimizer
-    Fix: Persistent Blackout & Effect Removal
-    Priority: Instant TP -> Loop Optimization -> Kill
-    Location: Secret Area (1947, 2, 6191)
+    Fix: Secret TP + Lock Position + NaN Size + 15-Punch Loop
     Key: Syniox-X-Yusuf
 ]]
 
@@ -18,60 +16,67 @@ _G.HopInterval = 60
 local SecretAreaPos = CFrame.new(1947, 2, 6191)
 
 -----------------------------------------------------------
--- [ YUSUF'S PERSISTENT OPTIMIZER ] --
+-- [ TP, LOCK & NaN SIZE ] --
 -----------------------------------------------------------
 task.spawn(function()
-    -- 1. ADIM: ANINDA TP
-    local function instantTP()
-        local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local function applyEffects(char)
         local hrp = char:WaitForChild("HumanoidRootPart")
+        local hum = char:WaitForChild("Humanoid")
+        
+        -- 1. Işınlanma
         hrp.CFrame = SecretAreaPos
+        task.wait(0.2)
+        
+        -- 2. NaN Size Uygulama (Görünmezlik ve Dokunulmazlık için)
+        -- Karakterin parçalarını geçersiz boyuta çeker
+        pcall(function()
+            for _, part in pairs(char:GetChildren()) do
+                if part:IsA("BasePart") then
+                    part.Size = Vector3.new(0/0, 0/0, 0/0) -- NaN Size
+                end
+            end
+        end)
     end
-    instantTP()
-    LocalPlayer.CharacterAdded:Connect(instantTP)
 
-    -- 2. ADIM: SÃƒÅ“REKLÃ„Â° OPTÃ„Â°MÃ„Â°ZASYON DÃƒâ€“NGÃƒÅ“SÃƒÅ“ (EFEKTLER GÃ„Â°TMEZSE DÃ„Â°YE)
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    applyEffects(char)
+    LocalPlayer.CharacterAdded:Connect(applyEffects)
+
+    -- Pozisyonu Kalıcı Kilitle (Heartbeat)
+    RS.Heartbeat:Connect(function()
+        if _G.KillActive and LocalPlayer.Character then
+            local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame = SecretAreaPos
+            end
+        end
+    end)
+end)
+
+-----------------------------------------------------------
+-- [ OPTIMIZER ] --
+-----------------------------------------------------------
+task.spawn(function()
     while true do
         pcall(function()
-            -- GUI TemizliÃ„Å¸i
             local playerGui = LocalPlayer:WaitForChild("PlayerGui")
             for _, gui in pairs(playerGui:GetChildren()) do
                 if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
             end
-
-            -- DÃƒÂ¼nya Efektlerini Sil
             for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then
+                if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("Trail") then
                     obj:Destroy()
                 end
             end
-
-            -- Lighting AyarlarÄ± (Siyah Ekran Garantisi)
             Lighting.Brightness = 0
             Lighting.ClockTime = 0
-            Lighting.GlobalShadows = false
-            Lighting.OutdoorAmbient = Color3.new(0,0,0)
-            Lighting.Ambient = Color3.new(0,0,0)
-            
-            for _, v in pairs(Lighting:GetChildren()) do
-                if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
-                    v:Destroy()
-                end
-            end
-            
-            if not Lighting:FindFirstChild("DarkSky") then
-                local darkSky = Instance.new("Sky", Lighting)
-                darkSky.Name = "DarkSky"
-                darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-                darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-            end
         end)
-        task.wait(5) -- Her 5 saniyede bir dÃƒÂ¼nyayÃ„Â± tekrar temizle
+        task.wait(5)
     end
 end)
 
 -----------------------------------------------------------
--- [ SYNIOX GUI - BYYUSUF ] --
+-- [ SYNIOX GUI ] --
 -----------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "SynioxGui"
@@ -92,38 +97,28 @@ Title.Size = UDim2.new(1, 0, 0, 22)
 Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
 Title.Text = "Syniox Paid Kill"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 10
+Title.Font = Enum.Font.GothamBold; Title.TextSize = 10
 Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
 
-FPSLabel.Position = UDim2.new(0, 0, 0, 30)
-FPSLabel.Size = UDim2.new(1, 0, 0, 20)
-FPSLabel.BackgroundTransparency = 1
-FPSLabel.Text = "FPS: 0"; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+FPSLabel.Position = UDim2.new(0, 0, 0, 30); FPSLabel.Size = UDim2.new(1, 0, 0, 20)
+FPSLabel.BackgroundTransparency = 1; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
 FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14
-FPSLabel.TextXAlignment = Enum.TextXAlignment.Center
 
-KillLabel.Position = UDim2.new(0, 0, 0, 55)
-KillLabel.Size = UDim2.new(1, 0, 0, 20)
-KillLabel.BackgroundTransparency = 1
-KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+KillLabel.Position = UDim2.new(0, 0, 0, 55); KillLabel.Size = UDim2.new(1, 0, 0, 20)
+KillLabel.BackgroundTransparency = 1; KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
 KillLabel.Font = Enum.Font.GothamBold; KillLabel.TextSize = 14
 
-TimerLabel.Position = UDim2.new(0, 0, 0, 85)
-TimerLabel.Size = UDim2.new(1, 0, 0, 30)
-TimerLabel.BackgroundTransparency = 1
-TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TimerLabel.Position = UDim2.new(0, 0, 0, 85); TimerLabel.Size = UDim2.new(1, 0, 0, 30)
+TimerLabel.BackgroundTransparency = 1; TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TimerLabel.Font = Enum.Font.GothamBold; TimerLabel.TextSize = 18
 
-CreditLabel.Position = UDim2.new(0, 0, 1, -22)
-CreditLabel.Size = UDim2.new(1, -10, 0, 20)
-CreditLabel.BackgroundTransparency = 1
-CreditLabel.Text = "ByYusuf"; CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreditLabel.TextTransparency = 0.4; CreditLabel.Font = Enum.Font.GothamBold
-CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
+CreditLabel.Position = UDim2.new(0, 0, 1, -22); CreditLabel.Size = UDim2.new(1, -10, 0, 20)
+CreditLabel.BackgroundTransparency = 1; CreditLabel.Text = "ByYusuf"
+CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255); CreditLabel.TextTransparency = 0.4
+CreditLabel.Font = Enum.Font.GothamBold; CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 -----------------------------------------------------------
--- [ KATLIAM VE HOPPER ] --
+-- [ SÜREKLİ 15'Lİ VURUŞ DÖNGÜSÜ ] --
 -----------------------------------------------------------
 local lastUpdate, frameCount = tick(), 0
 RS.RenderStepped:Connect(function()
@@ -141,9 +136,12 @@ task.spawn(function()
         pcall(function()
             local char = LocalPlayer.Character
             local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
+            
             if punch and char:FindFirstChild("RightHand") then
                 punch.Parent = char
-                for i = 1, 15 do LocalPlayer.muscleEvent:FireServer("punch", "rightHand") end
+                for i = 1, 15 do 
+                    LocalPlayer.muscleEvent:FireServer("punch", "rightHand") 
+                end
                 for _, target in ipairs(Players:GetPlayers()) do
                     if target ~= LocalPlayer and target.Character then
                         local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
@@ -156,10 +154,13 @@ task.spawn(function()
                 end
             end
         end)
-        RS.Stepped:Wait()
+        task.wait() 
     end
 end)
 
+-----------------------------------------------------------
+-- [ SERVER HOPPER ] --
+-----------------------------------------------------------
 local function forceHop()
     TimerLabel.Text = "TP..."
     local success, result = pcall(function()
@@ -184,3 +185,4 @@ task.spawn(function()
     end
     forceHop()
 end)
+
