@@ -1,6 +1,6 @@
 --[[
     Syniox Paid Kill - Force-Optimizer
-    Fix: Persistent Blackout & Effect Removal (Karma Visible Edition)
+    Fix: Persistent Blackout & Effect Removal
     Priority: Instant TP -> Loop Optimization -> Kill
     Location: Secret Area (1947, 2, 6191)
     Key: Syniox-X-Yusuf
@@ -18,7 +18,7 @@ _G.HopInterval = 60
 local SecretAreaPos = CFrame.new(1947, 2, 6191)
 
 -----------------------------------------------------------
--- [ YUSUF'S PERSISTENT OPTIMIZER - KARMA SUPPORTED ] --
+-- [ YUSUF'S PERSISTENT OPTIMIZER ] --
 -----------------------------------------------------------
 task.spawn(function()
     -- 1. ADIM: ANINDA TP
@@ -30,48 +30,43 @@ task.spawn(function()
     instantTP()
     LocalPlayer.CharacterAdded:Connect(instantTP)
 
-    -- 2. ADIM: SÜREKLİ OPTİMİZASYON DÖNGÜSÜ
+    -- 2. ADIM: SÃƒÅ“REKLÃ„Â° OPTÃ„Â°MÃ„Â°ZASYON DÃƒâ€“NGÃƒÅ“SÃƒÅ“ (EFEKTLER GÃ„Â°TMEZSE DÃ„Â°YE)
     while true do
         pcall(function()
-            -- GUI Temizliği (Karma Framelerini Korur)
+            -- GUI TemizliÃ„Å¸i
             local playerGui = LocalPlayer:WaitForChild("PlayerGui")
             for _, gui in pairs(playerGui:GetChildren()) do
-                if gui:IsA("ScreenGui") then
-                    -- gameGui (Karma buradadır) ve SynioxGui silinmez
-                    if gui.Name ~= "SynioxGui" and gui.Name ~= "gameGui" then 
-                        gui:Destroy() 
-                    end
-                end
+                if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
             end
 
-            -- Dünya Efektlerini Sil (Karma efektlerini korur)
+            -- DÃƒÂ¼nya Efektlerini Sil
             for _, obj in pairs(workspace:GetDescendants()) do
                 if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then
-                    -- Karma ile ilgili bir objeyse silme
-                    if not obj:FindFirstAncestor("goodKarma") and not obj:FindFirstAncestor("evilKarma") then
-                        obj:Destroy()
-                    end
+                    obj:Destroy()
                 end
             end
 
-            -- Lighting Ayarları (Karma yazılarının görünmesi için parlaklık artırıldı)
-            Lighting.Brightness = 2 -- Yazıların parlaması için 2 yapıldı
-            Lighting.ClockTime = 12
+            -- Lighting AyarlarÄ± (Siyah Ekran Garantisi)
+            Lighting.Brightness = 0
+            Lighting.ClockTime = 0
             Lighting.GlobalShadows = false
-            Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
+            Lighting.OutdoorAmbient = Color3.new(0,0,0)
+            Lighting.Ambient = Color3.new(0,0,0)
             
             for _, v in pairs(Lighting:GetChildren()) do
-                if v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
+                if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
                     v:Destroy()
                 end
             end
             
-            -- Siyah gökyüzü yazıları kapatmasın diye DarkSky kısmı temizlendi
-            if Lighting:FindFirstChild("DarkSky") then
-                Lighting.DarkSky:Destroy()
+            if not Lighting:FindFirstChild("DarkSky") then
+                local darkSky = Instance.new("Sky", Lighting)
+                darkSky.Name = "DarkSky"
+                darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
+                darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
             end
         end)
-        task.wait(5)
+        task.wait(5) -- Her 5 saniyede bir dÃƒÂ¼nyayÃ„Â± tekrar temizle
     end
 end)
 
