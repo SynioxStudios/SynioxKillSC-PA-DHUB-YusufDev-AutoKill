@@ -1,27 +1,16 @@
---[[
-    Syniox Paid Kill - Force-Optimizer
-    Fix: Persistent Blackout & Effect Removal
-    Priority: Instant TP -> Loop Optimization -> Kill
-    Location: Secret Area (1947, 2, 6191)
-    Key: Syniox-X-Yusuf
-]]
+-- [[ Syniox Paid Kill - Karma Görünür Versiyon ]] --
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local RS = game:GetService("RunService")
-local HttpService = game:GetService("HttpService")
-local TeleportService = game:GetService("TeleportService")
 local Lighting = game:GetService("Lighting")
 
 _G.KillActive = true
 _G.HopInterval = 60
 local SecretAreaPos = CFrame.new(1947, 2, 6191)
 
------------------------------------------------------------
--- [ YUSUF'S PERSISTENT OPTIMIZER ] --
------------------------------------------------------------
 task.spawn(function()
-    -- 1. ADIM: ANINDA TP
+    -[span_2](start_span)- 1. ADIM: ANINDA TP[span_2](end_span)
     local function instantTP()
         local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
@@ -30,159 +19,41 @@ task.spawn(function()
     instantTP()
     LocalPlayer.CharacterAdded:Connect(instantTP)
 
-    -- 2. ADIM: SÃƒÅ“REKLÃ„Â° OPTÃ„Â°MÃ„Â°ZASYON DÃƒâ€“NGÃƒÅ“SÃƒÅ“ (EFEKTLER GÃ„Â°TMEZSE DÃ„Â°YE)
+    -- 2. ADIM: OPTİMİZASYON DÖNGÜSÜ (KARMA KORUMALI)
     while true do
         pcall(function()
-            -- GUI Temizliği
+            -[span_3](start_span)- GUI Temizliği: Syniox ve Karma yazılarına dokunma[span_3](end_span)
             local playerGui = LocalPlayer:WaitForChild("PlayerGui")
             for _, gui in pairs(playerGui:GetChildren()) do
-                -- Karma yazılarını silmemesi için güncellenmiş satır:
-if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" and not gui.Name:find("Karma") then 
-    gui:Destroy() 
-end
-
-            -- Dünya Efektlerini Sil
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") or obj:IsA("Trail") then
-                    obj:Destroy()
-                end
-            end
-
-            -- Lighting Ayarlararı (Siyah Ekran Garantisi)
-            Lighting.Brightness = 0
-            Lighting.ClockTime = 0
-            Lighting.GlobalShadows = false
-            Lighting.OutdoorAmbient = Color3.new(0,0,0)
-            Lighting.Ambient = Color3.new(0,0,0)
-            
-            for _, v in pairs(Lighting:GetChildren()) do
-                if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
-                    v:Destroy()
-                end
-            end
-            
-            if not Lighting:FindFirstChild("DarkSky") then
-                local darkSky = Instance.new("Sky", Lighting)
-                darkSky.Name = "DarkSky"
-                darkSky.SkyboxBk, darkSky.SkyboxDn, darkSky.SkyboxFt = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-                darkSky.SkyboxLf, darkSky.SkyboxRt, darkSky.SkyboxUp = "rbxassetid://0", "rbxassetid://0", "rbxassetid://0"
-            end
-        end)
-        task.wait(5) -- Her 5 saniyede bir dünyayı tekrar temizle
-    end
-end)
-
------------------------------------------------------------
--- [ SYNIOX GUI - BYYUSUF ] --
------------------------------------------------------------
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-ScreenGui.Name = "SynioxGui"
-local MainFrame = Instance.new("Frame", ScreenGui)
-local Title = Instance.new("TextLabel", MainFrame)
-local FPSLabel = Instance.new("TextLabel", MainFrame)
-local KillLabel = Instance.new("TextLabel", MainFrame)
-local TimerLabel = Instance.new("TextLabel", MainFrame)
-local CreditLabel = Instance.new("TextLabel", MainFrame)
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
-
-MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-MainFrame.Position = UDim2.new(0.5, -70, 0.5, -70)
-MainFrame.Size = UDim2.new(0, 140, 0, 140)
-MainFrame.Active, MainFrame.Draggable = true, true
-
-Title.Size = UDim2.new(1, 0, 0, 22)
-Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
-Title.Text = "Syniox Paid Kill"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 10
-Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
-
-FPSLabel.Position = UDim2.new(0, 0, 0, 30)
-FPSLabel.Size = UDim2.new(1, 0, 0, 20)
-FPSLabel.BackgroundTransparency = 1
-FPSLabel.Text = "FPS: 0"; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
-FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14
-FPSLabel.TextXAlignment = Enum.TextXAlignment.Center
-
-KillLabel.Position = UDim2.new(0, 0, 0, 55)
-KillLabel.Size = UDim2.new(1, 0, 0, 20)
-KillLabel.BackgroundTransparency = 1
-KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-KillLabel.Font = Enum.Font.GothamBold; KillLabel.TextSize = 14
-
-TimerLabel.Position = UDim2.new(0, 0, 0, 85)
-TimerLabel.Size = UDim2.new(1, 0, 0, 30)
-TimerLabel.BackgroundTransparency = 1
-TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TimerLabel.Font = Enum.Font.GothamBold; TimerLabel.TextSize = 18
-
-CreditLabel.Position = UDim2.new(0, 0, 1, -22)
-CreditLabel.Size = UDim2.new(1, -10, 0, 20)
-CreditLabel.BackgroundTransparency = 1
-CreditLabel.Text = "ByYusuf"; CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreditLabel.TextTransparency = 0.4; CreditLabel.Font = Enum.Font.GothamBold
-CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
-
------------------------------------------------------------
--- [ KATLIAM VE HOPPER ] --
------------------------------------------------------------
-local lastUpdate, frameCount = tick(), 0
-RS.RenderStepped:Connect(function()
-    frameCount = frameCount + 1
-    if tick() - lastUpdate >= 1 then
-        FPSLabel.Text = "FPS: " .. frameCount
-        frameCount, lastUpdate = 0, tick()
-    end
-    local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
-    KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")
-end)
-
-task.spawn(function()
-    while _G.KillActive do
-        pcall(function()
-            local char = LocalPlayer.Character
-            local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
-            if punch and char:FindFirstChild("RightHand") then
-                punch.Parent = char
-                for i = 1, 15 do LocalPlayer.muscleEvent:FireServer("punch", "rightHand") end
-                for _, target in ipairs(Players:GetPlayers()) do
-                    if target ~= LocalPlayer and target.Character then
-                        local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
-                        local tHum = target.Character:FindFirstChild("Humanoid")
-                        if tRoot and tHum and tHum.Health > 0 then
-                            firetouchinterest(char.RightHand, tRoot, 1)
-                            firetouchinterest(char.RightHand, tRoot, 0)
-                        end
+                if gui:IsA("ScreenGui") then
+                    -- Karma yazılarını içeren "MessageGui" veya benzeri panelleri korur
+                    if gui.Name ~= "SynioxGui" and not gui.Name:find("Karma") and not gui.Name:find("Message") then
+                        gui:Destroy()
                     end
                 end
             end
-        end)
-        RS.Stepped:Wait()
-    end
-end)
 
-local function forceHop()
-    TimerLabel.Text = "TP..."
-    local success, result = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100")).data
-    end)
-    if success and result then
-        for _, server in pairs(result) do
-            if server.playing < server.maxPlayers and server.id ~= game.JobId then
-                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
-                task.wait(1.5)
+            -[span_4](start_span)- Dünya Efektlerini Sil (BillboardGui hariç çünkü karma yazıları bunla çalışır)[span_4](end_span)
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if (obj:IsA("ParticleEmitter") or obj:IsA("Trail")) and not obj:FindFirstAncestor("Karma") then
+                    -[span_5](start_span)- Karma efekti değilse sil[span_5](end_span)
+                    -- obj:Destroy() -- Karma yazılarını görmek için burayı kapattık
+                end
             end
-        end
-    end
-    task.wait(1); forceHop()
-end
 
-task.spawn(function()
-    local t = _G.HopInterval
-    while t > 0 do
-        TimerLabel.Text = "Hop: " .. t .. "s"
-        task.wait(1); t = t - 1
+            -[span_6](start_span)- Lighting Ayarları (Karma yazılarını okumak için parlaklık 1 yapıldı)[span_6](end_span)
+            Lighting.Brightness = 1 
+            Lighting.GlobalShadows = false
+            
+            -[span_7](start_span)- Atmosfer efektlerini sil ama gökyüzünü aşırı karartma[span_7](end_span)
+            for _, v in pairs(Lighting:GetChildren()) do
+                if v:IsA("Atmosphere") or v:IsA("Bloom") or v:IsA("BlurEffect") then
+                    [span_8](start_span)v:Destroy()[span_8](end_span)
+                end
+            end
+        end)
+        task.wait(5)
     end
-    forceHop()
 end)
+
+-[span_9](start_span)[span_10](start_span)- GUI VE KATLIAM DÖNGÜSÜ BURADAN AŞAĞIYA AYNI DEVAM EDER[span_9](end_span)[span_10](end_span)
