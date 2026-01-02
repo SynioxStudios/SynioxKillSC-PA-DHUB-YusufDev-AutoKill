@@ -1,6 +1,6 @@
 --[[
     Syniox Paid Kill - Force-Optimizer
-    Fix: Secret TP + Lock Position + NaN Size + 15-Punch Loop
+    Fix: Specific Limit Size + Secret TP + Lock Position + 15-Punch Loop
     Key: Syniox-X-Yusuf
 ]]
 
@@ -14,25 +14,28 @@ local Lighting = game:GetService("Lighting")
 _G.KillActive = true
 _G.HopInterval = 60
 local SecretAreaPos = CFrame.new(1947, 2, 6191)
+-- Attığın görseldeki tam sayı değeri:
+local LimitSizeValue = -9223372036854776000
 
 -----------------------------------------------------------
--- [ TP, LOCK & NaN SIZE ] --
+-- [ TP, LIMIT SIZE & LOCK ] --
 -----------------------------------------------------------
 task.spawn(function()
     local function applyEffects(char)
         local hrp = char:WaitForChild("HumanoidRootPart")
-        local hum = char:WaitForChild("Humanoid")
         
         -- 1. Işınlanma
         hrp.CFrame = SecretAreaPos
-        task.wait(0.2)
+        task.wait(0.5)
         
-        -- 2. NaN Size Uygulama (Görünmezlik ve Dokunulmazlık için)
-        -- Karakterin parçalarını geçersiz boyuta çeker
+        -- 2. Görseldeki Özel Boyut Ayarı
         pcall(function()
-            for _, part in pairs(char:GetChildren()) do
+            for _, part in pairs(char:GetDescendants()) do
                 if part:IsA("BasePart") then
-                    part.Size = Vector3.new(0/0, 0/0, 0/0) -- NaN Size
+                    -- Boyutu tam olarak istediğin sayıya çekiyoruz
+                    part.Size = Vector3.new(LimitSizeValue, LimitSizeValue, LimitSizeValue)
+                    part.CanCollide = false
+                    part.Massless = true
                 end
             end
         end)
@@ -42,7 +45,7 @@ task.spawn(function()
     applyEffects(char)
     LocalPlayer.CharacterAdded:Connect(applyEffects)
 
-    -- Pozisyonu Kalıcı Kilitle (Heartbeat)
+    -- Pozisyon Kilitleme
     RS.Heartbeat:Connect(function()
         if _G.KillActive and LocalPlayer.Character then
             local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -54,29 +57,7 @@ task.spawn(function()
 end)
 
 -----------------------------------------------------------
--- [ OPTIMIZER ] --
------------------------------------------------------------
-task.spawn(function()
-    while true do
-        pcall(function()
-            local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-            for _, gui in pairs(playerGui:GetChildren()) do
-                if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" then gui:Destroy() end
-            end
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("ParticleEmitter") or obj:IsA("PointLight") or obj:IsA("Trail") then
-                    obj:Destroy()
-                end
-            end
-            Lighting.Brightness = 0
-            Lighting.ClockTime = 0
-        end)
-        task.wait(5)
-    end
-end)
-
------------------------------------------------------------
--- [ SYNIOX GUI ] --
+-- [ SYNIOX GUI - BYYUSUF ] --
 -----------------------------------------------------------
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "SynioxGui"
@@ -95,14 +76,14 @@ MainFrame.Active, MainFrame.Draggable = true, true
 
 Title.Size = UDim2.new(1, 0, 0, 22)
 Title.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
-Title.Text = "Syniox Paid Kill"
+Title.Text = "Syniox Kill Bot"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold; Title.TextSize = 10
 Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
 
 FPSLabel.Position = UDim2.new(0, 0, 0, 30); FPSLabel.Size = UDim2.new(1, 0, 0, 20)
 FPSLabel.BackgroundTransparency = 1; FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
-FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14
+FPSLabel.Font = Enum.Font.GothamBold; FPSLabel.TextSize = 14; FPSLabel.Text = "FPS: 0"
 
 KillLabel.Position = UDim2.new(0, 0, 0, 55); KillLabel.Size = UDim2.new(1, 0, 0, 20)
 KillLabel.BackgroundTransparency = 1; KillLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
@@ -113,24 +94,13 @@ TimerLabel.BackgroundTransparency = 1; TimerLabel.TextColor3 = Color3.fromRGB(25
 TimerLabel.Font = Enum.Font.GothamBold; TimerLabel.TextSize = 18
 
 CreditLabel.Position = UDim2.new(0, 0, 1, -22); CreditLabel.Size = UDim2.new(1, -10, 0, 20)
-CreditLabel.BackgroundTransparency = 1; CreditLabel.Text = "ByYusuf"
+CreditLabel.BackgroundTransparency = 1; CreditLabel.Text = "@Syniox-X-Yusuf"
 CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255); CreditLabel.TextTransparency = 0.4
-CreditLabel.Font = Enum.Font.GothamBold; CreditLabel.TextSize = 11; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
+CreditLabel.Font = Enum.Font.GothamBold; CreditLabel.TextSize = 9; CreditLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 -----------------------------------------------------------
--- [ SÜREKLİ 15'Lİ VURUŞ DÖNGÜSÜ ] --
+-- [ 15-PUNCH KILL LOOP ] --
 -----------------------------------------------------------
-local lastUpdate, frameCount = tick(), 0
-RS.RenderStepped:Connect(function()
-    frameCount = frameCount + 1
-    if tick() - lastUpdate >= 1 then
-        FPSLabel.Text = "FPS: " .. frameCount
-        frameCount, lastUpdate = 0, tick()
-    end
-    local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
-    KillLabel.Text = "Kills: " .. (kills and tostring(kills.Value) or "0")
-end)
-
 task.spawn(function()
     while _G.KillActive do
         pcall(function()
@@ -145,8 +115,7 @@ task.spawn(function()
                 for _, target in ipairs(Players:GetPlayers()) do
                     if target ~= LocalPlayer and target.Character then
                         local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
-                        local tHum = target.Character:FindFirstChild("Humanoid")
-                        if tRoot and tHum and tHum.Health > 0 then
+                        if tRoot then
                             firetouchinterest(char.RightHand, tRoot, 1)
                             firetouchinterest(char.RightHand, tRoot, 0)
                         end
