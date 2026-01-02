@@ -36,7 +36,8 @@ task.spawn(function()
             -- GUI Temizliği
             local playerGui = LocalPlayer:WaitForChild("PlayerGui")
             for _, gui in pairs(playerGui:GetChildren()) do
-                if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" and gui.Name ~= "KarmaGui" then 
+                -- Karma yazılarını silmemesi için güncellenmiş satır:
+if gui:IsA("ScreenGui") and gui.Name ~= "SynioxGui" and not gui.Name:find("Karma") then 
     gui:Destroy() 
 end
 
